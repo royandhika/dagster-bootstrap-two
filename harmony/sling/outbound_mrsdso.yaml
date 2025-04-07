@@ -1,0 +1,94 @@
+source: slave
+target: itsql
+
+defaults:
+  object: '{ENV_SCHEMA}_dl.outbound_mrsdso_{stream_table}_intelix'
+  source_options:
+    limit: 2000
+  mode: incremental
+  primary_key: [id]
+  update_key: created_time
+
+env:
+  SLING_LOADED_AT_COLUMN: timestamp
+
+streams:
+  dyn_outbound_mrsdso.tms_prospect:
+    update_key: modified_time
+    sql: |
+      SELECT
+        *
+        ,COALESCE(last_info_time, created_time) AS modified_time
+      FROM {stream_schema}.{stream_table}
+      WHERE COALESCE(last_info_time, created_time) > COALESCE(ADDTIME({incremental_value}, '-00:00:05'), '2024-12-01')
+      ORDER BY COALESCE(last_info_time, created_time)
+    meta:
+      dagster:
+        asset_key: 'outbound_mrsdso_tms_prospect_intelix'
+        deps: 'outbound_mrsdso_tms_prospect'
+        group: 'outbound_mrsdso'
+
+  dyn_outbound_mrsdso.tms_prospect_campaign_result:
+    sql: |
+      SELECT
+        *
+      FROM {stream_schema}.{stream_table}
+      WHERE created_time > COALESCE(ADDTIME({incremental_value}, '-00:00:05'), '2024-12-01')
+      ORDER BY created_time
+    meta:
+      dagster:
+        asset_key: 'outbound_mrsdso_tms_prospect_campaign_result_intelix'
+        deps: 'outbound_mrsdso_tms_prospect_campaign_result'
+        group: 'outbound_mrsdso'
+
+  dyn_outbound_mrsdso.tms_prospect_detail:
+    sql: |
+      SELECT
+        *
+      FROM {stream_schema}.{stream_table}
+      WHERE created_time > COALESCE(ADDTIME({incremental_value}, '-00:00:05'), '2024-12-01')
+      ORDER BY created_time
+    meta:
+      dagster:
+        asset_key: 'outbound_mrsdso_tms_prospect_detail_intelix'
+        deps: 'outbound_mrsdso_tms_prospect_detail'
+        group: 'outbound_mrsdso'
+
+  dyn_outbound_mrsdso.tms_prospect_history_contact:
+    sql: |
+      SELECT
+        *
+      FROM {stream_schema}.{stream_table}
+      WHERE created_time > COALESCE(ADDTIME({incremental_value}, '-00:00:05'), '2024-12-01')
+      ORDER BY created_time
+    meta:
+      dagster:
+        asset_key: 'outbound_mrsdso_tms_prospect_history_contact_intelix'
+        deps: 'outbound_mrsdso_tms_prospect_history_contact'
+        group: 'outbound_mrsdso'
+      
+  dyn_outbound_mrsdso.tms_prospect_time_frame:
+    sql: |
+      SELECT
+        *
+      FROM {stream_schema}.{stream_table}
+      WHERE created_time > COALESCE(ADDTIME({incremental_value}, '-00:00:05'), '2024-12-01')
+      ORDER BY created_time
+    meta:
+      dagster:
+        asset_key: 'outbound_mrsdso_tms_prospect_time_frame_intelix'
+        deps: 'outbound_mrsdso_tms_prospect_time_frame'
+        group: 'outbound_mrsdso'
+
+  dyn_outbound_mrsdso.cc_master_category:
+    sql: |
+      SELECT
+        *
+      FROM {stream_schema}.{stream_table}
+      WHERE created_time > COALESCE(ADDTIME({incremental_value}, '-00:00:05'), '2004-12-01')
+      ORDER BY created_time
+    meta:
+      dagster:
+        asset_key: 'outbound_mrsdso_cc_master_category_intelix'
+        deps: 'outbound_mrsdso_cc_master_category'
+        group: 'outbound_mrsdso'

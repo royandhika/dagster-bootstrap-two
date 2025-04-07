@@ -1,0 +1,4 @@
+.env
+.dev.env
+profiles.yml
+__pycache__

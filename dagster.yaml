@@ -1,0 +1,77 @@
+local_artifact_storage:
+  module: dagster.core.storage.root
+  class: LocalArtifactStorage
+  config:
+    base_dir: .
+
+compute_logs:
+  module: dagster.core.storage.noop_compute_log_manager
+  class: NoOpComputeLogManager
+
+storage:
+  # postgres:
+  #   postgres_db:
+  #     hostname: 
+  #       env: DAGSTER_POSTGRES_HOST
+  #     username: 
+  #       env: DAGSTER_POSTGRES_USERNAME
+  #     password: 
+  #       env: DAGSTER_POSTGRES_PASSWORD
+  #     db_name: 
+  #       env: DAGSTER_POSTGRES_DB
+  #     port:
+  #       env: DAGSTER_POSTGRES_PORT
+  mysql:
+    mysql_db:
+      hostname: 
+        env: DAGSTER_MYSQL_HOST
+      username: 
+        env: DAGSTER_MYSQL_USERNAME
+      password: 
+        env: DAGSTER_MYSQL_PASSWORD
+      db_name: 
+        env: DAGSTER_MYSQL_DB
+      port:
+        env: DAGSTER_MYSQL_PORT
+
+scheduler:
+  module: dagster.core.scheduler
+  class: DagsterDaemonScheduler
+
+run_coordinator:
+  module: dagster.core.run_coordinator
+  class: QueuedRunCoordinator
+  config:
+    max_concurrent_runs: 25
+
+run_launcher:
+  module: dagster.core.launcher
+  class: DefaultRunLauncher
+
+telemetry:
+  enabled: false
+
+run_monitoring:
+  enabled: true
+  poll_interval_seconds: 60
+
+run_retries:
+  enabled: true
+  max_retries: 3
+  retry_on_asset_or_op_failure: false
+
+# Configures how long Dagster keeps sensor / schedule tick data
+retention:
+  schedule:
+    purge_after_days: 90 # sets retention policy for schedule ticks of all types
+  sensor:
+    purge_after_days:
+      skipped: 7
+      failure: 30
+      success: -1 # keep success ticks indefinitely
+
+code_servers:
+  local_startup_timeout: 360
+
+auto_materialize:
+  enabled: false

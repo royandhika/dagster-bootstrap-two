@@ -1,0 +1,79 @@
+source: slave
+target: itsql
+
+defaults:
+  object: '{ENV_SCHEMA}_dl.{stream_schema}_{stream_table}_intelix'
+  source_options:
+    limit: 2000
+  mode: backfill
+  primary_key: [id]
+
+env:
+  SLING_LOADED_AT_COLUMN: timestamp
+
+streams:
+  ecentrix_alpha.ecentrix_session_log:
+    update_key: last_update_time
+    sql: |
+      SELECT
+        *
+      FROM {stream_schema}.{stream_table}
+      WHERE {incremental_where_cond}
+      ORDER BY last_update_time
+    meta:
+      dagster:
+        asset_key: 'ecentrix_alpha_ecentrix_session_log_intelix'
+        deps: 'ecentrix_alpha_ecentrix_session_log'
+        group: 'ecentrix_alpha'
+
+  ecentrix_alpha.ecentrix_reference:
+    mode: full-refresh
+    meta:
+      dagster:
+        asset_key: 'ecentrix_alpha_ecentrix_reference_intelix'
+        deps: 'ecentrix_alpha_ecentrix_reference'
+        group: 'ecentrix_alpha'
+
+  ecentrix_bravo.ecentrix_session_log:
+    update_key: last_update_time
+    sql: |
+      SELECT
+        *
+      FROM {stream_schema}.{stream_table}
+      WHERE {incremental_where_cond}
+      ORDER BY last_update_time
+    meta:
+      dagster:
+        asset_key: 'ecentrix_bravo_ecentrix_session_log_intelix'
+        deps: 'ecentrix_bravo_ecentrix_session_log'
+        group: 'ecentrix_bravo'
+
+  ecentrix_bravo.ecentrix_reference:
+    mode: full-refresh
+    meta:
+      dagster:
+        asset_key: 'ecentrix_bravo_ecentrix_reference_intelix'
+        deps: 'ecentrix_bravo_ecentrix_reference'
+        group: 'ecentrix_bravo'
+
+  ecentrix_predictive.ecentrix_session_log:
+    update_key: last_update_time
+    sql: |
+      SELECT
+        *
+      FROM {stream_schema}.{stream_table}
+      WHERE {incremental_where_cond}
+      ORDER BY last_update_time
+    meta:
+      dagster:
+        asset_key: 'ecentrix_predictive_ecentrix_session_log_intelix'
+        deps: 'ecentrix_predictive_ecentrix_session_log'
+        group: 'ecentrix_predictive'
+
+  ecentrix_predictive.ecentrix_reference:
+    mode: full-refresh
+    meta:
+      dagster:
+        asset_key: 'ecentrix_predictive_ecentrix_reference_intelix'
+        deps: 'ecentrix_predictive_ecentrix_reference'
+        group: 'ecentrix_predictive'

@@ -1,0 +1,9 @@
+load_from:
+#   - python_module: 
+#       module_name: call_center_one.definitions
+#   - python_module: 
+#       module_name: sales_operation_one.definitions
+  - grpc_server:
+      host: dagster_code_harmony
+      port: 4001
+      location_name: 'harmony'

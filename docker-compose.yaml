@@ -1,0 +1,146 @@
+services:
+  # This service runs the postgres DB used by dagster for run storage, schedule storage,
+  # and event log storage. Depending on the hardware you run this Compose on, you may be able
+  # to reduce the interval and timeout in the healthcheck to speed up your `docker-compose up` times.
+  dagster_postgresql:
+    image: postgres:latest
+    container_name: dagster_postgresql
+    environment:
+      POSTGRES_USER: ${DAGSTER_POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${DAGSTER_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${DAGSTER_POSTGRES_DB}
+      TZ: ${TZ}
+    ports:
+      - "5433:5432"
+    networks:
+      - dagster-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U awopro11 -d dagster"]
+      interval: 10s
+      timeout: 8s
+      retries: 5
+    volumes:
+      - dagster-pg-volume:/var/lib/postgresql/data
+
+  dagster_mysql:
+    image: mysql:latest 
+    container_name: dagster_mysql 
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DAGSTER_MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${DAGSTER_MYSQL_DB}
+      TZ: ${TZ}
+    ports:
+      - "3306:3306"
+    networks:
+      - dagster-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DAGSTER_MYSQL_PASSWORD}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - dagster-mysql-volume:/var/lib/mysql
+
+  # This service runs the gRPC server that loads your user code, in both dagster-webserver
+  # and dagster-daemon. By setting DAGSTER_CURRENT_IMAGE to its own image, we tell the
+  # run launcher to use this same image when launching runs in a new container as well.
+  # Multiple containers like this can be deployed separately - each just needs to run on
+  # its own port, and have its own entry in the workspace.yaml file that's loaded by the
+      # webserver.
+  dagster_code_harmony:
+    build:
+      context: .
+      dockerfile: ./Dockerfile_harmony
+    container_name: dagster_code_harmony
+    image: dagster_code_harmony_image
+    restart: always
+    environment:
+      DAGSTER_CURRENT_IMAGE: "dagster_code_harmony_image"
+      PYTHONPATH: "/opt/dagster/app"
+    env_file:
+      - ./.dev.env
+    volumes:
+      - ./shared:/opt/dagster/app/shared
+      - ./profiles.yml:/opt/dagster/app/dbt/profiles.yml
+      - ./harmony:/opt/dagster/app
+    networks:
+      - dagster-network
+
+  # This service runs dagster-webserver, which loads your user code from the user code container.
+  # Since our instance uses the QueuedRunCoordinator, any runs submitted from the webserver will be put on
+  # a queue and later dequeued and launched by dagster-daemon.
+  dagster_webserver:
+    build:
+      context: .
+      dockerfile: ./Dockerfile_daemon
+    image: dagster_webserver_image
+    entrypoint:
+      - dagster-webserver
+      - -h
+      - "0.0.0.0"
+      - -p
+      - "3000"
+      - -w
+      - workspace.yaml
+    container_name: dagster_webserver
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./.dev.env
+    volumes: # Make docker client accessible so we can terminate containers from the webserver
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/io_manager_storage:/tmp/io_manager_storage
+      - ./dagster.yaml:/opt/dagster/dagster_home/dagster.yaml
+      - ./workspace.yaml:/opt/dagster/dagster_home/workspace.yaml
+    networks:
+      - dagster-network
+    depends_on:
+      dagster_postgresql:
+        condition: service_healthy
+      dagster_mysql:
+        condition: service_healthy
+      dagster_code_harmony:
+        condition: service_started
+
+  # This service runs the dagster-daemon process, which is responsible for taking runs
+  # off of the queue and launching them, as well as creating runs from schedules or sensors.
+  dagster_daemon:
+    build:
+      context: .
+      dockerfile: ./Dockerfile_daemon
+    image: dagster_daemon_image
+    entrypoint:
+      - dagster-daemon
+      - run
+    container_name: dagster_daemon
+    restart: on-failure
+    env_file:
+      - ./.dev.env
+    volumes: # Make docker client accessible so we can launch containers using host docker
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/io_manager_storage:/tmp/io_manager_storage
+      - ./dagster.yaml:/opt/dagster/dagster_home/dagster.yaml
+      - ./workspace.yaml:/opt/dagster/dagster_home/workspace.yaml
+    networks:
+      - dagster-network
+    depends_on:
+      dagster_postgresql:
+        condition: service_healthy
+      dagster_mysql:
+        condition: service_healthy
+      dagster_code_harmony:
+        condition: service_started
+
+networks:
+  dagster-network:
+    name: dagster_network
+    driver: bridge
+
+volumes:
+  dagster-pg-volume:
+    name: dagster_pg_volume
+  dagster-mysql-volume:
+    name: dagster_mysql_volume
