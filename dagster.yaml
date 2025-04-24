@@ -9,44 +9,50 @@ compute_logs:
   class: NoOpComputeLogManager
 
 storage:
-  # postgres:
-  #   postgres_db:
-  #     hostname: 
-  #       env: DAGSTER_POSTGRES_HOST
-  #     username: 
-  #       env: DAGSTER_POSTGRES_USERNAME
-  #     password: 
-  #       env: DAGSTER_POSTGRES_PASSWORD
-  #     db_name: 
-  #       env: DAGSTER_POSTGRES_DB
-  #     port:
-  #       env: DAGSTER_POSTGRES_PORT
-  mysql:
-    mysql_db:
+  postgres:
+    postgres_db:
       hostname: 
-        env: DAGSTER_MYSQL_HOST
+        env: DAGSTER_POSTGRES_HOST
       username: 
-        env: DAGSTER_MYSQL_USERNAME
+        env: DAGSTER_POSTGRES_USERNAME
       password: 
-        env: DAGSTER_MYSQL_PASSWORD
+        env: DAGSTER_POSTGRES_PASSWORD
       db_name: 
-        env: DAGSTER_MYSQL_DB
+        env: DAGSTER_POSTGRES_DB
       port:
-        env: DAGSTER_MYSQL_PORT
+        env: DAGSTER_POSTGRES_PORT
+  # mysql:
+  #   mysql_db:
+  #     hostname: 
+  #       env: DAGSTER_MYSQL_HOST
+  #     username: 
+  #       env: DAGSTER_MYSQL_USERNAME
+  #     password: 
+  #       env: DAGSTER_MYSQL_PASSWORD
+  #     db_name: 
+  #       env: DAGSTER_MYSQL_DB
+  #     port:
+  #       env: DAGSTER_MYSQL_PORT
 
 scheduler:
   module: dagster.core.scheduler
   class: DagsterDaemonScheduler
 
-run_coordinator:
-  module: dagster.core.run_coordinator
-  class: QueuedRunCoordinator
-  config:
-    max_concurrent_runs: 25
+# run_coordinator:
+#   module: dagster.core.run_coordinator
+#   class: QueuedRunCoordinator
+#   config:
+#     max_concurrent_runs: 1
 
-run_launcher:
-  module: dagster.core.launcher
-  class: DefaultRunLauncher
+concurrency:
+  runs:
+    max_concurrent_runs: 2
+  pools:
+    default_limit: 4
+
+# run_launcher:
+#   module: dagster.core.launcher
+#   class: DefaultRunLauncher
 
 telemetry:
   enabled: false
@@ -57,7 +63,7 @@ run_monitoring:
 
 run_retries:
   enabled: true
-  max_retries: 3
+  max_retries: 2
   retry_on_asset_or_op_failure: false
 
 # Configures how long Dagster keeps sensor / schedule tick data
