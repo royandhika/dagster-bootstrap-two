@@ -57,7 +57,7 @@ services:
       DAGSTER_CURRENT_IMAGE: "dagster_code_harmony_image"
       PYTHONPATH: "/opt/dagster/app"
     env_file:
-      - ./.dev.env
+      - ./.env
     volumes:
       - ./shared:/opt/dagster/app/shared
       - ./profiles.yml:/opt/dagster/app/dbt/profiles.yml
@@ -78,16 +78,16 @@ services:
       - -h
       - "0.0.0.0"
       - -p
-      - "3000"
+      - "${DAGSTER_PORT}"
       - -w
       - workspace.yaml
     container_name: dagster_webserver
     expose:
-      - "3000"
+      - "${DAGSTER_PORT}"
     ports:
-      - "3000:3000"
+      - "${DAGSTER_PORT}:${DAGSTER_PORT}"
     env_file:
-      - ./.dev.env
+      - ./.env
     volumes: # Make docker client accessible so we can terminate containers from the webserver
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/io_manager_storage:/tmp/io_manager_storage
@@ -116,7 +116,7 @@ services:
     container_name: dagster_daemon
     restart: on-failure
     env_file:
-      - ./.dev.env
+      - ./.env
     volumes: # Make docker client accessible so we can launch containers using host docker
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/io_manager_storage:/tmp/io_manager_storage
