@@ -1,7 +1,7 @@
 from dagster import AssetKey, AssetSpec, AssetDep, Config
 from dagster_dbt import DagsterDbtTranslator
 from dagster_sling import DagsterSlingTranslator
-from typing import Mapping, Optional
+from typing import Mapping, Optional, Any
 
 
 class CustomDbtTranslator(DagsterDbtTranslator):
@@ -29,11 +29,11 @@ class CustomSlingTranslator(DagsterSlingTranslator):
         original_deps = asset_spec.deps
 
         new_asset_spec = asset_spec.replace_attributes(
-            key=AssetKey(["landings"] + asset_spec.key.path),
+            key=AssetKey(["landings"] + list(asset_spec.key.path)),
             kinds={"sqlserver", "sling"},
             deps=[
                 AssetDep(
-                    asset=AssetKey(["sources"] + dep.asset_key.path),
+                    asset=AssetKey(["sources"] + list(dep.asset_key.path)),
                     partition_mapping=dep.partition_mapping,
                 )
                 for dep in original_deps
@@ -41,7 +41,7 @@ class CustomSlingTranslator(DagsterSlingTranslator):
         )
         return new_asset_spec
     
-    def _default_description_fn(self, stream_definition: Mapping[str, any]) -> Optional[str]:
+    def _default_description_fn(self, stream_definition: Mapping[str, Any]) -> Optional[str]:
         config = stream_definition.get("config", {})
         meta = config.get("meta", {})
         return meta.get("dagster", {}).get("description")
