@@ -1,0 +1,17 @@
+version: 2
+
+groups:
+  - name: outbound_deskcollfif
+    owner:
+      name: dbm
+
+sources:
+  - name: "{{ env_var('ENV_SCHEMA') + '_dl' }}"
+    tables:
+      - name: outbound_deskcollfif_acs_call_history_daily_intelix
+      - name: outbound_deskcollfif_acs_call_history_detail_daily_intelix
+      - name: outbound_deskcollfif_acs_reference_intelix
+      - name: outbound_deskcollfif_acs_customer_profile_ext_intelix
+
+models:
+  - name: out_fif_deskcoll_report_prospect

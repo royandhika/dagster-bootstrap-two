@@ -1,0 +1,24 @@
+version: 2
+
+groups:
+  - name: outbound_tafteleacquisition
+    owner:
+      name: dbm
+
+sources:
+  - name: "{{ env_var('ENV_SCHEMA') + '_dl' }}"
+    tables:
+      - name: outbound_tafteleacquisition_tms_prospect_intelix
+      - name: outbound_tafteleacquisition_tms_prospect_detail_intelix
+      - name: outbound_tafteleacquisition_tms_prospect_campaign_result_intelix
+      - name: outbound_tafteleacquisition_tms_prospect_history_contact_intelix
+      - name: outbound_tafteleacquisition_tms_prospect_time_frame_intelix
+      - name: outbound_tafteleacquisition_cc_master_category_intelix
+
+models:
+  - name: out_taf_teleacquisition_cde_report_prospect_timeframe
+  - name: out_taf_teleacquisition_cde_report_prospect
+  - name: out_taf_teleacquisition_esurvey_report_prospect
+  - name: out_taf_teleacquisition_survey_report_prospect
+  - name: out_taf_teleacquisition_verif_report_prospect_timeframe
+  - name: out_taf_teleacquisition_verif_report_prospect

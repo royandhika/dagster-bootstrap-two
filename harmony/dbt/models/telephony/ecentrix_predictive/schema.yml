@@ -1,0 +1,16 @@
+version: 2
+
+groups:
+  - name: ecentrix_predictive
+    owner:
+      name: dbm
+
+sources:
+  - name: "{{ env_var('ENV_SCHEMA') + '_dl' }}"
+    tables:
+      - name: ecentrix_predictive_ecentrix_session_log_intelix
+      - name: ecentrix_predictive_ecentrix_reference_intelix
+
+models:
+  - name: out_fif_deskcoll_report_telephony
+  - name: out_taf_dero_report_telephony

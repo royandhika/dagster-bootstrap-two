@@ -2,8 +2,9 @@
 	config(
 		materialized='incremental',
 		schema=env_var('ENV_SCHEMA') + '_dm',
-        unique_key='id',
-        group='outbound_mrsdso'
+		unique_key=['id'],
+        group='outbound_mrsdso',
+		tags=['outbound']
 	)
 }}
 
@@ -29,45 +30,30 @@ with prospect as (
     from {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_mrsdso_tms_prospect_intelix') }} tp
     where main_campaign = 'TSO'
 		{% if is_incremental() %}
-    	and modified_time >= convert(date, getdate()-1)
+    	and modified_time >= '{{ var('min_date') }}'
+    	and modified_time <= '{{ var('max_date') }}'
 		{% endif %}
 )
 ,prospect_detail as (
     select 
         prospect_id
-        ,case when field_name = 'CustomerNo' then data_content end as [CustomerNo]
-        ,case when field_name = 'CustID' then data_content end as [CustID]
-        ,case when field_name = 'CustomerName' then data_content end as [CustomerName]
-        ,case when field_name = 'MSISDN' then data_content end as [MSISDN]
-        ,case when field_name = 'TelephoneNo' then data_content end as [TelephoneNo]
-        ,case when field_name = 'Year' then data_content end as [Year]
-        ,case when field_name = 'model' then data_content end as [model]
-        ,case when field_name = 'LastUnitServiceTransaction' then data_content end as [LastUnitServiceTransaction]
-        ,case when field_name = 'LastUnitServicePoliceRegNo' then data_content end as [LastUnitServicePoliceRegNo]
-        ,case when field_name = 'TrxTime' then data_content end as [TrxTime]
-        ,case when field_name = 'SweepingCategory' then data_content end as [SweepingCategory]
+        ,max(case when field_name = 'CustomerNo' then data_content end) as [CustomerNo]
+        ,max(case when field_name = 'CustID' then data_content end) as [CustID]
+        ,max(case when field_name = 'CustomerName' then data_content end) as [CustomerName]
+        ,max(case when field_name = 'MSISDN' then data_content end) as [MSISDN]
+        ,max(case when field_name = 'TelephoneNo' then data_content end) as [TelephoneNo]
+        ,max(case when field_name = 'Year' then data_content end) as [Year]
+        ,max(case when field_name = 'model' then data_content end) as [model]
+        ,max(case when field_name = 'LastUnitServiceTransaction' then data_content end) as [LastUnitServiceTransaction]
+        ,max(case when field_name = 'LastUnitServicePoliceRegNo' then data_content end) as [LastUnitServicePoliceRegNo]
+        ,max(case when field_name = 'TrxTime' then data_content end) as [TrxTime]
+        ,max(case when field_name = 'SweepingCategory' then data_content end) as [SweepingCategory]
     from {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_mrsdso_tms_prospect_detail_intelix') }} pd
     where exists (
     	select file_id 
     	from prospect p
     	where pd.file_id = p.file_id
 	)
-)
-,prospect_detail_transpose as (
-    select 
-        prospect_id
-        ,max([CustomerNo]) as [CustomerNo] 
-        ,max([CustID]) as [CustID] 
-        ,max([CustomerName]) as [CustomerName] 
-        ,max([MSISDN]) as [MSISDN] 
-        ,max([TelephoneNo]) as [TelephoneNo] 
-        ,max([Year]) as [Year] 
-        ,max([model]) as [model] 
-        ,max([LastUnitServiceTransaction]) as [LastUnitServiceTransaction] 
-        ,max([LastUnitServicePoliceRegNo]) as [LastUnitServicePoliceRegNo] 
-        ,max([TrxTime]) as [TrxTime] 
-        ,max([SweepingCategory]) as [SweepingCategory] 
-    from prospect_detail 
     group by prospect_id
 )
 ,campaign_result as (
@@ -75,25 +61,15 @@ with prospect as (
         prospect_id 
         ,campaign_id 
         ,file_id
-        ,case when field_name = 'Q1 Agent' then data_content end as [Q1 Agent]
-        ,case when field_name = 'Q2 Agent' then data_content end as [Q2 Agent]
-        ,case when field_name = 'Q3 Agent' then data_content end as [Q3 Agent]
+        ,max(case when field_name = 'Q1 Agent' then data_content end) as [Q1 Agent]
+        ,max(case when field_name = 'Q2 Agent' then data_content end) as [Q2 Agent]
+        ,max(case when field_name = 'Q3 Agent' then data_content end) as [Q3 Agent]
     from {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_mrsdso_tms_prospect_campaign_result_intelix') }} cr
 	where exists (
     	select file_id 
     	from prospect p
     	where cr.file_id = p.file_id
 	)  
-)
-,campaign_result_transpose as (
-    select 
-        prospect_id
-        ,campaign_id
-        ,file_id
-        ,max([Q1 Agent]) as [Q1 Agent]
-        ,max([Q2 Agent]) as [Q2 Agent]
-        ,max([Q3 Agent]) as [Q3 Agent]
-    from campaign_result
     group by prospect_id, campaign_id, file_id
 )
 ,history_contact as (
@@ -192,9 +168,9 @@ with prospect as (
 		,d.[Appointment Time]
 		,uploaddate = getdate()
 	from prospect a
-	left join prospect_detail_transpose b 
+	left join prospect_detail b 
         on a.id = b.prospect_id
-	left join campaign_result_transpose c 
+	left join campaign_result c 
         on a.id = c.prospect_id 
 		and a.main_campaign = c.campaign_id
 	left join map_lov d 

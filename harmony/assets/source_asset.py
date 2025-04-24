@@ -1,20 +1,189 @@
-from shared.utils.custom_function import create_external_asset
+from shared.utils.custom_function import external_asset
 
 
 external = [
-    create_external_asset("ecentrix_alpha", ["sources", "ecentrix_alpha_ecentrix_session_log"], "...", ["MySQL"]),
-    create_external_asset("ecentrix_alpha", ["sources", "ecentrix_alpha_ecentrix_reference"], "...", ["MySQL"]),
-    create_external_asset("ecentrix_bravo", ["sources", "ecentrix_bravo_ecentrix_session_log"], "...", ["MySQL"]),
-    create_external_asset("ecentrix_bravo", ["sources", "ecentrix_bravo_ecentrix_reference"], "...", ["MySQL"]),
-    create_external_asset("ecentrix_predictive", ["sources", "ecentrix_predictive_ecentrix_session_log"], "...", ["MySQL"]),
-    create_external_asset("ecentrix_predictive", ["sources", "ecentrix_predictive_ecentrix_reference"], "...", ["MySQL"]),
-
-    create_external_asset("outbound_mrsdso", ["sources", "outbound_mrsdso_tms_prospect"], "...", ["MySQL"]),
-    create_external_asset("outbound_mrsdso", ["sources", "outbound_mrsdso_tms_prospect_detail"], "...", ["MySQL"]),
-    create_external_asset("outbound_mrsdso", ["sources", "outbound_mrsdso_tms_prospect_campaign_result"], "...", ["MySQL"]),
-    create_external_asset("outbound_mrsdso", ["sources", "outbound_mrsdso_tms_prospect_history_contact"], "...", ["MySQL"]),
-    create_external_asset("outbound_mrsdso", ["sources", "outbound_mrsdso_tms_prospect_time_frame"], "...", ["MySQL"]),
-    create_external_asset("outbound_mrsdso", ["sources", "outbound_mrsdso_cc_master_category"], "...", ["MySQL"]),
-
-    create_external_asset("outbound_aop", ["sources", "outbound_aop_tms_prospect"], "...", ["MySQL"]),
+    # TELEPHONY
+    *external_asset(
+        {"MySQL"},
+        "ecentrix_alpha",
+        [
+            "ecentrix_alpha_ecentrix_session_log",
+            "ecentrix_alpha_ecentrix_reference",
+        ],
+    ),
+    *external_asset(
+        {"MySQL"},
+        "ecentrix_bravo",
+        [
+            "ecentrix_bravo_ecentrix_session_log",
+            "ecentrix_bravo_ecentrix_reference",
+        ],
+    ),
+    *external_asset(
+        {"MySQL"},
+        "ecentrix_predictive",
+        [
+            "ecentrix_predictive_ecentrix_session_log",
+            "ecentrix_predictive_ecentrix_reference",
+        ],
+    ),
+    # OUTBOUND
+    *external_asset(
+        {"MySQL"},
+        "outbound_mrsdso",
+        [
+            "outbound_mrsdso_tms_prospect",
+            "outbound_mrsdso_tms_prospect_detail",
+            "outbound_mrsdso_tms_prospect_campaign_result",
+            "outbound_mrsdso_tms_prospect_history_contact",
+            "outbound_mrsdso_tms_prospect_time_frame",
+            "outbound_mrsdso_cc_master_category",
+        ],
+    ),
+    *external_asset(
+        {"MySQL"},
+        "outbound_adm",
+        [
+            "outbound_adm_tms_prospect",
+            "outbound_adm_tms_prospect_detail",
+            "outbound_adm_tms_prospect_campaign_result",
+            "outbound_adm_tms_prospect_history_contact",
+            "outbound_adm_tms_prospect_time_frame",
+            "outbound_adm_cc_master_category",
+        ],
+    ),
+    *external_asset(
+        {"MySQL"},
+        "outbound_ahm",
+        [
+            "outbound_ahm_tms_prospect",
+            "outbound_ahm_tms_prospect_detail",
+            "outbound_ahm_tms_prospect_campaign_result",
+            "outbound_ahm_tms_prospect_history_contact",
+            "outbound_ahm_tms_prospect_time_frame",
+            "outbound_ahm_cc_master_category",
+        ],
+    ),
+    *external_asset(
+        {"MySQL"},
+        "outbound_esvi",
+        [
+            "outbound_esvi_tms_prospect",
+            "outbound_esvi_tms_prospect_detail",
+            "outbound_esvi_tms_prospect_campaign_result",
+            "outbound_esvi_tms_prospect_history_contact",
+            "outbound_esvi_tms_prospect_time_frame",
+            "outbound_esvi_cc_master_category",
+        ],
+    ),
+    *external_asset(
+        {"MySQL"},
+        "outbound_tafteleacquisition",
+        [
+            "outbound_tafteleacquisition_tms_prospect",
+            "outbound_tafteleacquisition_tms_prospect_detail",
+            "outbound_tafteleacquisition_tms_prospect_campaign_result",
+            "outbound_tafteleacquisition_tms_prospect_history_contact",
+            "outbound_tafteleacquisition_tms_prospect_time_frame",
+            "outbound_tafteleacquisition_cc_master_category",
+        ],
+    ),
+    *external_asset(
+        {"MySQL"},
+        "outbound_mrs_iso",
+        [
+            "outbound_mrs_iso_tms_prospect",
+            "outbound_mrs_iso_tms_prospect_detail",
+            "outbound_mrs_iso_tms_prospect_campaign_result",
+            "outbound_mrs_iso_tms_prospect_history_contact",
+            "outbound_mrs_iso_tms_prospect_response_detail",
+            "outbound_mrs_iso_tms_master_category",
+        ],
+    ),
+    *external_asset(
+        {"MySQL"},
+        "outbound_deskcollfif",
+        [
+            "outbound_deskcollfif_acs_call_history_daily",
+            "outbound_deskcollfif_acs_call_history_detail_daily",
+            "outbound_deskcollfif_acs_customer_profile_ext",
+            "outbound_deskcollfif_acs_customer_data",
+            "outbound_deskcollfif_acs_reference",
+        ],
+    ),
+    # INBOUND
+    *external_asset(
+        {"MySQL"},
+        "inbound_awda",
+        [
+            "inbound_awda_cc_queue",
+            "inbound_awda_cc_queue_detail",
+            "inbound_awda_cc_user",
+            "inbound_awda_cc_master_customer_detail",
+            "inbound_awda_cc_master_customer",
+            "inbound_awda_cc_master_category",
+            "inbound_awda_cc_master_reference",
+        ],
+    ),
+    *external_asset(
+        {"MySQL"},
+        "inbound_awo",
+        [
+            "inbound_awo_cc_queue",
+            "inbound_awo_cc_queue_detail",
+            "inbound_awo_cc_user",
+            "inbound_awo_cc_master_customer_detail",
+            "inbound_awo_cc_master_customer",
+            "inbound_awo_cc_master_category",
+            "inbound_awo_cc_master_reference",
+        ],
+    ),
+    *external_asset(
+        {"MySQL"},
+        "inbound_nasmoco",
+        [
+            "inbound_nasmoco_cc_queue",
+            "inbound_nasmoco_cc_queue_detail",
+            "inbound_nasmoco_cc_user",
+            "inbound_nasmoco_cc_master_customer_detail",
+            "inbound_nasmoco_cc_master_customer",
+            "inbound_nasmoco_cc_master_category",
+            "inbound_nasmoco_cc_master_reference",
+        ],
+    ),
+    *external_asset(
+        {"MySQL"},
+        "inbound_taf",
+        [
+            "inbound_taf_cc_queue",
+            "inbound_taf_cc_queue_detail",
+            "inbound_taf_cc_user",
+            "inbound_taf_cc_master_customer_detail",
+            "inbound_taf_cc_master_customer",
+            "inbound_taf_cc_master_category",
+            "inbound_taf_cc_master_reference",
+            "inbound_taf_wa_inbox",
+        ],
+    ),
+    *external_asset(
+        {"MySQL"},
+        "inbound_omni_astralife",
+        [
+            "inbound_omni_astralife_cc_queue",
+            "inbound_omni_astralife_wa_inbox",
+        ],
+    ),
+    *external_asset(
+        {"MySQL"},
+        "inbound_shopanddrive_v4",
+        [
+            "inbound_shopanddrive_v4_cc_queue",
+            "inbound_shopanddrive_v4_cc_queue_detail",
+            "inbound_shopanddrive_v4_cc_ticket_time_frame",
+            "inbound_shopanddrive_v4_cc_master_customer",
+            "inbound_shopanddrive_v4_cc_master_category",
+            "inbound_shopanddrive_v4_cc_master_reference",
+            "inbound_shopanddrive_v4_cc_master_status",
+        ],
+    ),
 ]

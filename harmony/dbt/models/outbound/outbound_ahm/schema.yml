@@ -1,0 +1,24 @@
+version: 2
+
+groups:
+  - name: outbound_ahm
+    owner:
+      name: dbm
+
+sources:
+  - name: "{{ env_var('ENV_SCHEMA') + '_dl' }}"
+    tables:
+      - name: outbound_ahm_tms_prospect_intelix
+      - name: outbound_ahm_tms_prospect_detail_intelix
+      - name: outbound_ahm_tms_prospect_campaign_result_intelix
+      - name: outbound_ahm_tms_prospect_history_contact_intelix
+      - name: outbound_ahm_tms_prospect_time_frame_intelix
+      - name: outbound_ahm_cc_master_category_intelix
+
+models:
+  - name: out_ahm_awareness_cc_report_prospect
+  - name: out_ahm_awareness_report_prospect
+  - name: out_ahm_cdb_report_prospect
+  - name: out_ahm_csat_report_prospect
+  - name: out_ahm_leadsh1_report_prospect
+  - name: out_ahm_probingleads_report_prospect

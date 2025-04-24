@@ -2,8 +2,9 @@
 	config(
 		materialized='incremental',
 		schema=env_var('ENV_SCHEMA') + '_dm',
-        unique_key='id',
-        group='outbound_mrsdso'
+        unique_key=['id', '"Attempt Call"'],
+        group='outbound_mrsdso',
+		tags=['outbound']
 	)
 }}
 
@@ -29,7 +30,8 @@ with prospect as (
     from {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_mrsdso_tms_prospect_intelix') }} tp
     where main_campaign = 'DS03'
 		{% if is_incremental() %}
-    	and modified_time >= convert(date, getdate()-1)
+    	and modified_time >= '{{ var('min_date') }}'
+    	and modified_time <= '{{ var('max_date') }}'
 		{% endif %}
 )
 ,prospect_detail as (
@@ -84,12 +86,12 @@ with prospect as (
         ,max(case when field_name = 'Q5 Validasi Nama Wiraniaga' then data_content end) [q5_validasi_nama_wiraniaga]
         ,max(case when field_name = 'q5a' then data_content end) [q5a]
     from {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_mrsdso_tms_prospect_campaign_result_intelix') }} cr
-	where exists (
+    	where exists (
     	select file_id 
     	from prospect p
     	where cr.file_id = p.file_id
-	)  
-    group by prospect_id, campaign_id, file_id
+	)
+    group by prospect_id, campaign_id, file_id  
 )
 ,history_contact as (
     select 
@@ -100,8 +102,6 @@ with prospect as (
 		,a.appointmentDate as [Appointment Date]
 		,a.appointmentTime as [Appointment Time]
 		,a.created_time
-		,row_number() over(partition by a.prospect_id order by a.created_time desc) as Sort
-		,[Attempt Call] = count(a.created_time) over(partition by a.prospect_id)
     from {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_mrsdso_tms_prospect_history_contact_intelix') }} a
     where a.file_id in (select file_id from prospect)
 )
@@ -114,8 +114,6 @@ with prospect as (
 		,a.[Appointment Date]
 		,a.[Appointment Time]
 		,a.[created_time] as [Last Response Time]
-		,a.[Sort]
-		,a.[Attempt Call]
     from history_contact a
     left join {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_mrsdso_cc_master_category_intelix') }} b
         ON a.LOV1 = b.id
@@ -132,7 +130,6 @@ with prospect as (
         ,a.description as [Campaign Description]
         ,a.created_time as [Last Response Time]
         ,a.created_by as [Agent Id]
-        ,row_number() over(partition by a.prospect_id, a.campaign_id order by a.created_time desc) as Sort
     from {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_mrsdso_tms_prospect_time_frame_intelix') }} a
     where exists (
     	select file_id 
@@ -202,7 +199,10 @@ with prospect as (
         ,e.[Campaign Description]
 		,d.[Last Response Time]
 		,e.[Agent Id]
-		,d.[Attempt Call]
+		,[Attempt Call] = case 
+			when d.[Last Response Time] is null then null 
+			else row_number() over(partition by a.id order by d.[last Response Time])
+		end
 		,d.[Appointment Date]
 		,d.[Appointment Time]
 		,uploaddate = getdate()
@@ -213,11 +213,10 @@ with prospect as (
         on a.id = c.prospect_id 
 		and a.main_campaign = c.campaign_id
 	left join map_lov d 
-        on a.id = d.prospect_id 
-		and d.Sort = 1
+        on a.id = d.prospect_id
 	left join time_frame e 
         on a.id = e.prospect_id 
 		and c.campaign_id = e.campaign_id
-		and e.Sort = 1
+		and d.[Last Response Time] between dateadd(second, -20, e.[Last Response Time]) and dateadd(second, 20, e.[Last Response Time])
 )
 select * from final

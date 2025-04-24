@@ -28,6 +28,7 @@ sling_slave_conn = SlingConnectionResource(
 
 resource_sling = SlingResource(connections=[sling_itsql_conn, sling_slave_conn])
 
+
 def create_dbt_project(profile_name: str = "awodb") -> Tuple[DbtProject, DbtCliResource]:
     base_path = Path(__file__).joinpath("..", "..", "..", "dbt").resolve() #local dagster dev
     dbt_path = DbtProject(

@@ -1,6 +1,0 @@
-version: 2
-
-models:
-  - name: out_dso_mrs_report_prospect
-  - name: out_dso_revalidasi_report_prospect
-  - name: out_tso_sweepcust_report_prospect

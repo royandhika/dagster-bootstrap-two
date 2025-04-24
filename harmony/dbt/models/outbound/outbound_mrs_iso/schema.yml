@@ -1,0 +1,19 @@
+version: 2
+
+groups:
+  - name: outbound_mrs_iso
+    owner:
+      name: dbm
+
+sources:
+  - name: "{{ env_var('ENV_SCHEMA') + '_dl' }}"
+    tables:
+      - name: outbound_mrs_iso_tms_prospect_intelix
+      - name: outbound_mrs_iso_tms_prospect_detail_intelix
+      - name: outbound_mrs_iso_tms_prospect_campaign_result_intelix
+      - name: outbound_mrs_iso_tms_prospect_response_detail_intelix
+      - name: outbound_mrs_iso_tms_master_category_intelix
+
+models:
+  - name: out_iso_csi_report_prospect
+  - name: out_iso_ssi_report_prospect

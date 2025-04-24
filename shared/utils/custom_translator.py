@@ -1,6 +1,8 @@
-from dagster import AssetKey, AssetSpec, AssetDep
+from dagster import AssetKey, AssetSpec, AssetDep, Config
 from dagster_dbt import DagsterDbtTranslator
 from dagster_sling import DagsterSlingTranslator
+from typing import Mapping, Optional
+
 
 class CustomDbtTranslator(DagsterDbtTranslator):
     def get_asset_key(self, dbt_resource_props) -> AssetKey:
@@ -9,11 +11,11 @@ class CustomDbtTranslator(DagsterDbtTranslator):
         schema = dbt_resource_props["schema"]
         # fqn = dbt_resource_props["fqn"][1]
 
-        if schema in ("eth_dl", "awo_dl"):
+        if "_dl" in schema:
             prefix = "landings"
-        elif schema in ("eth_di", "awo_di"):
+        elif "_di" in schema:
             prefix = "integrations"
-        elif schema in ("eth_dm", "awo_dm"):
+        elif "_dm" in schema:
             prefix = "marts" 
         else:
             prefix = "default"
@@ -29,7 +31,6 @@ class CustomSlingTranslator(DagsterSlingTranslator):
         new_asset_spec = asset_spec.replace_attributes(
             key=AssetKey(["landings"] + asset_spec.key.path),
             kinds={"sqlserver", "sling"},
-            # description=,
             deps=[
                 AssetDep(
                     asset=AssetKey(["sources"] + dep.asset_key.path),
@@ -39,3 +40,13 @@ class CustomSlingTranslator(DagsterSlingTranslator):
             ]
         )
         return new_asset_spec
+    
+    def _default_description_fn(self, stream_definition: Mapping[str, any]) -> Optional[str]:
+        config = stream_definition.get("config", {})
+        meta = config.get("meta", {})
+        return meta.get("dagster", {}).get("description")
+    
+
+class CustomDbtRun(Config):
+    full_refresh: bool = False
+    threads: int = 3

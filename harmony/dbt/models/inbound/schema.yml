@@ -1,4 +1,51 @@
 version: 2
 
+groups:
+  - name: inbound_awda
+    owner:
+      name: dbm
+  - name: inbound_awo
+    owner:
+      name: dbm
+  - name: inbound_nasmoco
+    owner:
+      name: dbm
+  - name: inbound_taf
+    owner:
+      name: dbm
+
+sources:
+  - name: "{{ env_var('ENV_SCHEMA') + '_dl' }}"
+    tables:
+      - name: inbound_awda_cc_queue_intelix
+      - name: inbound_awda_cc_queue_detail_intelix
+      - name: inbound_awda_cc_master_category_intelix
+      - name: inbound_awda_cc_master_reference_intelix
+      - name: inbound_awda_cc_master_customer_intelix
+
+      - name: inbound_awo_cc_queue_intelix
+      - name: inbound_awo_cc_queue_detail_intelix
+      - name: inbound_awo_cc_master_category_intelix
+      - name: inbound_awo_cc_master_reference_intelix
+      - name: inbound_awo_cc_master_customer_intelix
+
+      - name: inbound_nasmoco_cc_queue_intelix
+      - name: inbound_nasmoco_cc_queue_detail_intelix
+      - name: inbound_nasmoco_cc_master_category_intelix
+      - name: inbound_nasmoco_cc_master_reference_intelix
+      - name: inbound_nasmoco_cc_master_customer_intelix
+
+      - name: inbound_taf_cc_queue_intelix
+      - name: inbound_taf_cc_queue_detail_intelix
+      - name: inbound_taf_cc_master_category_intelix
+      - name: inbound_taf_cc_master_reference_intelix
+      - name: inbound_taf_cc_master_customer_intelix
+
 models:
-  - name: delete_dagster
+  - name: in_awda_maucash_report_ticket
+
+  - name: in_awo_ticket_report
+
+  - name: in_nasmoco_ticket_report
+
+  - name: in_taf_report_ticket
