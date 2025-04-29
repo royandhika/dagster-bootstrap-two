@@ -1,7 +1,7 @@
 from dagster import AssetKey, AssetSpec, AssetDep, Config
 from dagster_dbt import DagsterDbtTranslator
 from dagster_sling import DagsterSlingTranslator
-from typing import Mapping, Optional, Any
+from typing import Mapping, Optional, Any, Literal
 
 
 class CustomDbtTranslator(DagsterDbtTranslator):
@@ -22,6 +22,7 @@ class CustomDbtTranslator(DagsterDbtTranslator):
 
         return AssetKey([prefix, name])
     
+
 class CustomSlingTranslator(DagsterSlingTranslator):
     def get_asset_spec(self, stream_definition) -> AssetSpec:
         asset_spec = super().get_asset_spec(stream_definition)
@@ -50,3 +51,7 @@ class CustomSlingTranslator(DagsterSlingTranslator):
 class CustomDbtRun(Config):
     full_refresh: bool = False
     threads: int = 3
+
+
+class CustomPandasRun(Config):
+    method: Literal["fail", "replace", "append"] = "append"

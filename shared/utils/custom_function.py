@@ -1,9 +1,12 @@
 from dagster import AssetSpec, AssetKey, EnvVar
 from dagster._core.definitions.time_window_partitions import TimeWindow
 from datetime import datetime
-from typing import Any
+from pandas import DataFrame
+from sqlalchemy import create_engine
+from typing import Any, Literal
 import yaml
 import os
+import json
 
 
 def external_asset(kind: set[str], group:str, tables: list) -> list[AssetSpec]:
@@ -47,3 +50,22 @@ def sling_add_backfill(config: dict, time_window: TimeWindow) -> dict:
     config["defaults"]["source_options"]["range"] = range_date
 
     return config
+
+
+def pandas_write_table(table_name: str, method: Literal["fail", "replace", "append"], data: DataFrame):
+    conn_string = EnvVar("ITSQL_STRING").get_value() or ""
+    engine = create_engine(conn_string)
+    schema = EnvVar("ENV_SCHEMA").get_value() or ""
+    data["uploaddate"] = datetime.now()
+    
+    for col in data.columns:
+        if data[col].apply(lambda x: isinstance(x, (dict, list, set, tuple))).any():
+            data[col] = data[col].apply(lambda x: json.dumps(x) if isinstance(x, (dict, list, set, tuple)) else x)
+    
+    data.to_sql(
+        schema=schema+'_dl', 
+        name=table_name, 
+        con=engine, 
+        if_exists=method, 
+        index=False
+    )
