@@ -1,0 +1,16 @@
+version: 2
+
+groups:
+  - name: outbound_clipan_duitcair
+    owner:
+      name: dbm
+
+sources:
+  - name: "{{ env_var('ENV_SCHEMA') + '_dl' }}"
+    tables:
+      - name: outbound_clipan_duitcair_report_prospect_api
+      - name: outbound_clipan_duitcair_report_prospect_timeframe_api
+
+models:
+  - name: out_clipan_duitcair_report_prospect
+  - name: out_clipan_duitcair_report_prospect_timeframe

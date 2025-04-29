@@ -4,7 +4,7 @@ from shared.utils.custom_function import external_asset
 external = [
     # TELEPHONY
     *external_asset(
-        {"MySQL"},
+        {"mysql"},
         "ecentrix_alpha",
         [
             "ecentrix_alpha_ecentrix_session_log",
@@ -12,7 +12,7 @@ external = [
         ],
     ),
     *external_asset(
-        {"MySQL"},
+        {"mysql"},
         "ecentrix_bravo",
         [
             "ecentrix_bravo_ecentrix_session_log",
@@ -20,7 +20,7 @@ external = [
         ],
     ),
     *external_asset(
-        {"MySQL"},
+        {"mysql"},
         "ecentrix_predictive",
         [
             "ecentrix_predictive_ecentrix_session_log",
@@ -29,7 +29,7 @@ external = [
     ),
     # OUTBOUND
     *external_asset(
-        {"MySQL"},
+        {"mysql"},
         "outbound_mrsdso",
         [
             "outbound_mrsdso_tms_prospect",
@@ -41,7 +41,7 @@ external = [
         ],
     ),
     *external_asset(
-        {"MySQL"},
+        {"mysql"},
         "outbound_adm",
         [
             "outbound_adm_tms_prospect",
@@ -53,7 +53,7 @@ external = [
         ],
     ),
     *external_asset(
-        {"MySQL"},
+        {"mysql"},
         "outbound_ahm",
         [
             "outbound_ahm_tms_prospect",
@@ -65,7 +65,7 @@ external = [
         ],
     ),
     *external_asset(
-        {"MySQL"},
+        {"mysql"},
         "outbound_esvi",
         [
             "outbound_esvi_tms_prospect",
@@ -77,7 +77,7 @@ external = [
         ],
     ),
     *external_asset(
-        {"MySQL"},
+        {"mysql"},
         "outbound_tafteleacquisition",
         [
             "outbound_tafteleacquisition_tms_prospect",
@@ -89,7 +89,7 @@ external = [
         ],
     ),
     *external_asset(
-        {"MySQL"},
+        {"mysql"},
         "outbound_mrs_iso",
         [
             "outbound_mrs_iso_tms_prospect",
@@ -101,7 +101,7 @@ external = [
         ],
     ),
     *external_asset(
-        {"MySQL"},
+        {"mysql"},
         "outbound_deskcollfif",
         [
             "outbound_deskcollfif_acs_call_history_daily",
@@ -113,7 +113,7 @@ external = [
     ),
     # INBOUND
     *external_asset(
-        {"MySQL"},
+        {"mysql"},
         "inbound_awda",
         [
             "inbound_awda_cc_queue",
@@ -126,7 +126,7 @@ external = [
         ],
     ),
     *external_asset(
-        {"MySQL"},
+        {"mysql"},
         "inbound_awo",
         [
             "inbound_awo_cc_queue",
@@ -139,7 +139,7 @@ external = [
         ],
     ),
     *external_asset(
-        {"MySQL"},
+        {"mysql"},
         "inbound_nasmoco",
         [
             "inbound_nasmoco_cc_queue",
@@ -152,7 +152,7 @@ external = [
         ],
     ),
     *external_asset(
-        {"MySQL"},
+        {"mysql"},
         "inbound_taf",
         [
             "inbound_taf_cc_queue",
@@ -166,7 +166,7 @@ external = [
         ],
     ),
     *external_asset(
-        {"MySQL"},
+        {"mysql"},
         "inbound_omni_astralife",
         [
             "inbound_omni_astralife_cc_queue",
@@ -174,7 +174,7 @@ external = [
         ],
     ),
     *external_asset(
-        {"MySQL"},
+        {"mysql"},
         "inbound_shopanddrive_v4",
         [
             "inbound_shopanddrive_v4_cc_queue",

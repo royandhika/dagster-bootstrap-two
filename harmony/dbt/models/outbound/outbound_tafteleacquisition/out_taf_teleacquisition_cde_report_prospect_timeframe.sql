@@ -4,7 +4,7 @@
 		schema=env_var('ENV_SCHEMA') + '_dm',
 		unique_key=['id', '"Attempt Call"'],
         group='outbound_tafteleacquisition',
-		tags=['outbound']
+		tags=['3hourly']
 	)
 }}
 

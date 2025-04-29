@@ -1,0 +1,21 @@
+version: 2
+
+groups:
+  - name: outbound_jmfi_mycash
+    owner:
+      name: dbm
+
+sources:
+  - name: "{{ env_var('ENV_SCHEMA') + '_dl' }}"
+    tables:
+      - name: outbound_jmfi_mycash_golive_api
+      - name: outbound_jmfi_mycash_golive_xlsx
+      - name: outbound_jmfi_mycash_report_prospect_timeframe_api
+      - name: outbound_jmfi_mycash_report_prospect_api
+      - name: outbound_jmfi_mycash_supply_api
+
+models:
+  - name: out_jmfi_mycash_golive
+  - name: out_jmfi_mycash_report_prospect_timeframe
+  - name: out_jmfi_mycash_report_prospect
+  - name: out_jmfi_mycash_supply

@@ -4,7 +4,7 @@
         schema=env_var('ENV_SCHEMA') + '_dm',
         unique_key=['id'],
         group='ecentrix_bravo',
-		tags=['telephony']
+		tags=['12hourly']
     )
 }}
 

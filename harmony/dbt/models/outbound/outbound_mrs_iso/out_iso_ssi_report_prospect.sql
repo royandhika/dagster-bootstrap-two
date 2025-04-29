@@ -4,7 +4,7 @@
 		schema=env_var('ENV_SCHEMA') + '_dm',
 		unique_key=['id'],
         group='outbound_mrs_iso',
-		tags=['outbound']
+		tags=['12hourly']
 	)
 }}
 

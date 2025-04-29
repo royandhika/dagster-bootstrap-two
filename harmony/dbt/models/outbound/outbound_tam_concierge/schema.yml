@@ -1,0 +1,16 @@
+version: 2
+
+groups:
+  - name: outbound_tam_concierge
+    owner:
+      name: dbm
+
+sources:
+  - name: "{{ env_var('ENV_SCHEMA') + '_dl' }}"
+    tables:
+      - name: outbound_tam_concierge_report_prospect_timeframe_api
+      - name: outbound_tam_concierge_report_prospect_api
+
+models:
+  - name: out_tam_concierge_report_prospect_timeframe
+  - name: out_tam_concierge_report_prospect

@@ -1,12 +1,12 @@
-# dagster-bootstrap-two
+# Project Medusa
 
-Dagster with my custom needs, the specification:  
-*dagster, dbt, sling, sqlserver, mysql*  
-Also, made a docker compose script for deployment-ready that contains:
-- database container (using mysql),
+Production grade dagster project, with separate container adapting microservices:
+- database container (using pg),
 - webserver container,
 - daemon container,
-- grpc(code location) container
+- grpc(s) container
+
+This project is mono-container, but can be run separately
 
 ## Getting started
 
@@ -24,7 +24,11 @@ You can specify new Python dependencies in `requirements.txt`.
 
 ### Shared resources
 
-Resources are made global in `shared/resources` and `shared/utils`, so multiple grpc container can use them without repeating the code itself.
+Some resources are made global in 
+`shared/resources`  
+`shared/utils`  
+`shared/partitions`  
+so multiple grpc container can use them without repeating the code (DRY).
 
 ### Unit testing
 
@@ -32,5 +36,6 @@ TBD
 
 ### Schedules and sensors
 
-If you want to enable Dagster [Schedules](https://docs.dagster.io/guides/automate/schedules/) or [Sensors](https://docs.dagster.io/guides/automate/sensors/) for your jobs, the [Dagster Daemon](https://docs.dagster.io/guides/deploy/execution/dagster-daemon) process must be running. This is done automatically when you run `dagster dev`.  
-TBD
+### Partitions
+
+### 

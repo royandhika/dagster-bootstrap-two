@@ -4,7 +4,7 @@
         schema=env_var('ENV_SCHEMA') + '_dm',
         unique_key=['ticket_no'],
         group='inbound_taf',
-        tags=['inbound']
+        tags=['12hourly']
     )
 }}
 

@@ -21,25 +21,6 @@ services:
     volumes:
       - dagster-pg-volume:/var/lib/postgresql/data
 
-  # dagster_mysql:
-  #   image: mysql:latest 
-  #   container_name: dagster_mysql 
-  #   restart: always
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: ${DAGSTER_MYSQL_PASSWORD}
-  #     MYSQL_DATABASE: ${DAGSTER_MYSQL_DB}
-  #   ports:
-  #     - "3306:3306"
-  #   networks:
-  #     - dagster-network
-  #   healthcheck:
-  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DAGSTER_MYSQL_PASSWORD}"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 5
-  #   volumes:
-  #     - dagster-mysql-volume:/var/lib/mysql
-
   # This service runs the gRPC server that loads your user code, in both dagster-webserver
   # and dagster-daemon. By setting DAGSTER_CURRENT_IMAGE to its own image, we tell the
   # run launcher to use this same image when launching runs in a new container as well.
@@ -98,8 +79,6 @@ services:
     depends_on:
       dagster_postgresql:
         condition: service_healthy
-      # dagster_mysql:
-      #   condition: service_healthy
       dagster_code_harmony:
         condition: service_started
 
@@ -127,8 +106,6 @@ services:
     depends_on:
       dagster_postgresql:
         condition: service_healthy
-      # dagster_mysql:
-      #   condition: service_healthy
       dagster_code_harmony:
         condition: service_started
 
@@ -140,5 +117,3 @@ networks:
 volumes:
   dagster-pg-volume:
     name: dagster_pg_volume
-  # dagster-mysql-volume:
-  #   name: dagster_mysql_volume

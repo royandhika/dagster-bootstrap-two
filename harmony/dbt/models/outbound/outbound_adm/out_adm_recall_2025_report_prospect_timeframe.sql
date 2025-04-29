@@ -4,7 +4,7 @@
 		schema=env_var('ENV_SCHEMA') + '_dm',
         unique_key=['id', 'attempt_call'],
         group='outbound_adm',
-		tags=['outbound']
+		tags=['12hourly']
 	)
 }}
 
