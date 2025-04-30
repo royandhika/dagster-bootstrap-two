@@ -95,7 +95,6 @@ external = [
             "outbound_mrs_iso_tms_prospect",
             "outbound_mrs_iso_tms_prospect_detail",
             "outbound_mrs_iso_tms_prospect_campaign_result",
-            "outbound_mrs_iso_tms_prospect_history_contact",
             "outbound_mrs_iso_tms_prospect_response_detail",
             "outbound_mrs_iso_tms_master_category",
         ],
