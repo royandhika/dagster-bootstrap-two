@@ -40,14 +40,6 @@ streams:
         deps: 'inbound_shopanddrive_v4_cc_queue_detail'
         group: 'inbound_shopanddrive_v4'
 
-  inbound_shopanddrive_v4.cc_ticket_time_frame:
-    update_key: response_time
-    meta:
-      dagster:
-        asset_key: 'inbound_shopanddrive_v4_cc_ticket_time_frame_intelix'
-        deps: 'inbound_shopanddrive_v4_cc_ticket_time_frame'
-        group: 'inbound_shopanddrive_v4'
-
   inbound_shopanddrive_v4.cc_master_customer:
     primary_key: [customer_id]
     meta:
@@ -69,12 +61,4 @@ streams:
       dagster:
         asset_key: 'inbound_shopanddrive_v4_cc_master_reference_intelix'
         deps: 'inbound_shopanddrive_v4_cc_master_reference'
-        group: 'inbound_shopanddrive_v4'
-
-  inbound_shopanddrive_v4.cc_master_status:
-    primary_key: [status_id]
-    meta:
-      dagster:
-        asset_key: 'inbound_shopanddrive_v4_cc_master_status_intelix'
-        deps: 'inbound_shopanddrive_v4_cc_master_status'
         group: 'inbound_shopanddrive_v4'

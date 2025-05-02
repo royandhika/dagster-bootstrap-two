@@ -117,8 +117,6 @@ external = [
         [
             "inbound_awda_cc_queue",
             "inbound_awda_cc_queue_detail",
-            "inbound_awda_cc_user",
-            "inbound_awda_cc_master_customer_detail",
             "inbound_awda_cc_master_customer",
             "inbound_awda_cc_master_category",
             "inbound_awda_cc_master_reference",
@@ -130,8 +128,6 @@ external = [
         [
             "inbound_awo_cc_queue",
             "inbound_awo_cc_queue_detail",
-            "inbound_awo_cc_user",
-            "inbound_awo_cc_master_customer_detail",
             "inbound_awo_cc_master_customer",
             "inbound_awo_cc_master_category",
             "inbound_awo_cc_master_reference",
@@ -143,8 +139,6 @@ external = [
         [
             "inbound_nasmoco_cc_queue",
             "inbound_nasmoco_cc_queue_detail",
-            "inbound_nasmoco_cc_user",
-            "inbound_nasmoco_cc_master_customer_detail",
             "inbound_nasmoco_cc_master_customer",
             "inbound_nasmoco_cc_master_category",
             "inbound_nasmoco_cc_master_reference",
@@ -156,8 +150,6 @@ external = [
         [
             "inbound_taf_cc_queue",
             "inbound_taf_cc_queue_detail",
-            "inbound_taf_cc_user",
-            "inbound_taf_cc_master_customer_detail",
             "inbound_taf_cc_master_customer",
             "inbound_taf_cc_master_category",
             "inbound_taf_cc_master_reference",
@@ -178,11 +170,9 @@ external = [
         [
             "inbound_shopanddrive_v4_cc_queue",
             "inbound_shopanddrive_v4_cc_queue_detail",
-            "inbound_shopanddrive_v4_cc_ticket_time_frame",
             "inbound_shopanddrive_v4_cc_master_customer",
             "inbound_shopanddrive_v4_cc_master_category",
             "inbound_shopanddrive_v4_cc_master_reference",
-            "inbound_shopanddrive_v4_cc_master_status",
         ],
     ),
 ]

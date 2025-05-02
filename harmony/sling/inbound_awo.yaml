@@ -40,34 +40,6 @@ streams:
         deps: 'inbound_awo_cc_queue_detail'
         group: 'inbound_awo'
 
-  inbound_awo.cc_user:
-    primary_key: [id, site]
-    update_key: modified_time
-    sql: |
-      WITH source AS (
-        SELECT
-          *
-          ,COALESCE(updated_time, created_time) AS modified_time
-        FROM {stream_schema}.{stream_table}
-      )
-      SELECT
-        *
-      FROM source
-      WHERE {incremental_where_cond}
-      ORDER BY modified_time
-    meta:
-      dagster:
-        asset_key: 'inbound_awo_cc_user_intelix'
-        deps: 'inbound_awo_cc_user'
-        group: 'inbound_awo'
-
-  inbound_awo.cc_master_customer_detail:
-    meta:
-      dagster:
-        asset_key: 'inbound_awo_cc_master_customer_detail_intelix'
-        deps: 'inbound_awo_cc_master_customer_detail'
-        group: 'inbound_awo'
-
   inbound_awo.cc_master_customer:
     primary_key: [customer_id]
     meta:
