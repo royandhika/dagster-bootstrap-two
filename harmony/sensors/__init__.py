@@ -36,7 +36,7 @@ def sensor_tms_datamart_12hourly(context):
     minimum_interval_seconds=60,
 )
 def sensor_tms_datamart_daily(context):
-    if datetime.now().hour % 12 == 0:
+    if datetime.now().hour == 0:
         partition_keys = dicts["tms_datamart_daily"].partitions_def.get_partition_keys()
         last_partition = partition_keys[-1]
         yield RunRequest(partition_key=last_partition)
@@ -58,5 +58,6 @@ def sensor_api_datamart_12hourly(context):
 sensors = [
     sensor_tms_datamart_3hourly,
     sensor_tms_datamart_12hourly,
+    sensor_tms_datamart_daily,
     sensor_api_datamart_12hourly,
 ]
