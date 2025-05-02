@@ -1,5 +1,5 @@
 from dagster import AssetSelection, define_asset_job, build_schedule_from_partitioned_job
-from shared.partitions import partition_hourly, partition_2hourly, partition_3hourly, partition_12hourly
+from shared.partitions import partition_hourly, partition_2hourly, partition_3hourly, partition_12hourly, partition_daily
 
 
 jobs = []
@@ -54,10 +54,6 @@ job_configs = [
             AssetSelection.groups("ecentrix_alpha") & AssetSelection.key_prefixes("marts")
             | AssetSelection.groups("ecentrix_bravo") & AssetSelection.key_prefixes("marts")
             | AssetSelection.groups("ecentrix_predictive") & AssetSelection.key_prefixes("marts")
-            | AssetSelection.groups("inbound_awda") & AssetSelection.key_prefixes("marts") 
-            | AssetSelection.groups("inbound_awo") & AssetSelection.key_prefixes("marts")
-            | AssetSelection.groups("inbound_nasmoco") & AssetSelection.key_prefixes("marts")
-            | AssetSelection.groups("inbound_taf") & AssetSelection.key_prefixes("marts")
             | AssetSelection.groups("outbound_adm") & AssetSelection.key_prefixes("marts")
             | AssetSelection.groups("outbound_ahm") & AssetSelection.key_prefixes("marts")
             | AssetSelection.groups("outbound_esvi") & AssetSelection.key_prefixes("marts")
@@ -65,6 +61,15 @@ job_configs = [
             | AssetSelection.groups("outbound_mrsdso") & AssetSelection.key_prefixes("marts")
             | AssetSelection.groups("outbound_deskcollfif") & AssetSelection.key_prefixes("marts"),
         "partitions_def": partition_12hourly            
+    },
+    {
+        "name": "tms_datamart_daily",
+        "selection": 
+            AssetSelection.groups("inbound_awda") & AssetSelection.key_prefixes("marts") 
+            | AssetSelection.groups("inbound_awo") & AssetSelection.key_prefixes("marts")
+            | AssetSelection.groups("inbound_nasmoco") & AssetSelection.key_prefixes("marts")
+            | AssetSelection.groups("inbound_taf") & AssetSelection.key_prefixes("marts"),
+        "partitions_def": partition_daily
     },
     {
         "name": "api_datamart_12hourly",

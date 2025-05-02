@@ -25,8 +25,8 @@ def outbound_clipan_duitcair_report_prospect_api(context: AssetExecutionContext,
     for type in types:
         payload = {
             "campaign_id": "9d33d466-f4c9-44eb-8225-f7855d0e3a97",
-            f"{type}_from": f"{start.isoformat()}",
-            f"{type}_to": f"{end.isoformat()}"
+            f"{type}_from": f"{start.strftime('%Y-%m-%d %H:%M:%S')}",
+            f"{type}_to": f"{end.strftime('%Y-%m-%d %H:%M:%S')}"
         }
 
         data = api_crm.request(
@@ -66,8 +66,8 @@ def outbound_clipan_duitcair_report_prospect_timeframe_api(context: AssetExecuti
     for type in types:
         payload = {
             "campaign_id": "9d33d466-f4c9-44eb-8225-f7855d0e3a97",
-            f"{type}_from": f"{start.isoformat()}",
-            f"{type}_to": f"{end.isoformat()}"
+            f"{type}_from": f"{start.strftime('%Y-%m-%d %H:%M:%S')}",
+            f"{type}_to": f"{end.strftime('%Y-%m-%d %H:%M:%S')}"
         }
 
         data = api_crm.request(
@@ -107,8 +107,8 @@ def outbound_tam_concierge_report_prospect_api(context: AssetExecutionContext, a
     for type in types:
         payload = {
             "campaign_id": "9ced60dd-5f58-48d2-ad27-63bfc12ce424",
-            f"{type}_from": f"{start.isoformat()}",
-            f"{type}_to": f"{end.isoformat()}"
+            f"{type}_from": f"{start.strftime('%Y-%m-%d %H:%M:%S')}",
+            f"{type}_to": f"{end.strftime('%Y-%m-%d %H:%M:%S')}"
         }
 
         data = api_crm.request(
@@ -148,8 +148,8 @@ def outbound_tam_concierge_report_prospect_timeframe_api(context: AssetExecution
     for type in types:
         payload = {
             "campaign_id": "9ced60dd-5f58-48d2-ad27-63bfc12ce424",
-            f"{type}_from": f"{start.isoformat()}",
-            f"{type}_to": f"{end.isoformat()}"
+            f"{type}_from": f"{start.strftime('%Y-%m-%d %H:%M:%S')}",
+            f"{type}_to": f"{end.strftime('%Y-%m-%d %H:%M:%S')}"
         }
 
         data = api_crm.request(
@@ -190,8 +190,8 @@ def outbound_jmfi_mycash_report_prospect_api(context: AssetExecutionContext, api
         payload = {
             "campaign": f"{type}",
             "type" : "last_response",
-            "interaction_date_from": f"{start.isoformat()}",
-            "interaction_date_to": f"{end.isoformat()}"
+            "interaction_date_from": f"{start.strftime('%Y-%m-%d %H:%M:%S')}",
+            "interaction_date_to": f"{end.strftime('%Y-%m-%d %H:%M:%S')}"
         }
 
         data = api_crm.request(
@@ -232,8 +232,8 @@ def outbound_jmfi_mycash_report_prospect_timeframe_api(context: AssetExecutionCo
         payload = {
             "campaign": f"{type}",
             "type" : "time_frame",
-            "interaction_date_from": f"{start.isoformat()}",
-            "interaction_date_to": f"{end.isoformat()}"
+            "interaction_date_from": f"{start.strftime('%Y-%m-%d %H:%M:%S')}",
+            "interaction_date_to": f"{end.strftime('%Y-%m-%d %H:%M:%S')}"
         }
 
         data = api_crm.request(
@@ -273,8 +273,8 @@ def outbound_jmfi_mycash_golive_api(context: AssetExecutionContext, api_crm: API
     for type in types:
         payload = {
             "campaign": f"{type}",
-            "last_go_live_update_date_from": f"{start.isoformat()}",
-            "last_go_live_update_date_to": f"{end.isoformat()}"
+            "last_go_live_update_date_from": f"{start.strftime('%Y-%m-%d %H:%M:%S')}",
+            "last_go_live_update_date_to": f"{end.strftime('%Y-%m-%d %H:%M:%S')}"
         }
 
         data = api_crm.request(
@@ -314,10 +314,10 @@ def outbound_jmfi_mycash_supply_api(context: AssetExecutionContext, api_crm: API
     for type in types:
         payload = {
             "campaign": f"{type}",
-            "assignment_date_from": f"{start.isoformat()}",
-            "assignment_date_to": f"{end.isoformat()}",
-            "supply_date_from": f"{start.isoformat()}",
-            "supply_date_to": f"{end.isoformat()}"
+            "assignment_date_from": f"{start.strftime('%Y-%m-%d %H:%M:%S')}",
+            "assignment_date_to": f"{end.strftime('%Y-%m-%d %H:%M:%S')}",
+            "supply_date_from": f"{start.strftime('%Y-%m-%d %H:%M:%S')}",
+            "supply_date_to": f"{end.strftime('%Y-%m-%d %H:%M:%S')}"
         }
 
         data = api_crm.request(

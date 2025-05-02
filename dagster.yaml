@@ -42,7 +42,7 @@ run_monitoring:
 run_retries:
   enabled: true
   max_retries: 2
-  retry_on_asset_or_op_failure: false
+  retry_on_asset_or_op_failure: true
 
 # Configures how long Dagster keeps sensor / schedule tick data
 retention:

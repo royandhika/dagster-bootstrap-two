@@ -18,13 +18,26 @@ def sensor_tms_datamart_3hourly(context):
 
 @run_status_sensor(
     run_status=DagsterRunStatus.SUCCESS,
-    monitored_jobs=[dicts["tms_datalanding_hourly"], dicts["tms_datalanding_2hourly"]],
+    monitored_jobs=[dicts["tms_datalanding_hourly"]],
     request_jobs=[dicts["tms_datamart_12hourly"]],
     minimum_interval_seconds=60,
 )
 def sensor_tms_datamart_12hourly(context):
     if datetime.now().hour % 12 == 0:
         partition_keys = dicts["tms_datamart_12hourly"].partitions_def.get_partition_keys()
+        last_partition = partition_keys[-1]
+        yield RunRequest(partition_key=last_partition)
+
+
+@run_status_sensor(
+    run_status=DagsterRunStatus.SUCCESS,
+    monitored_jobs=[dicts["tms_datalanding_2hourly"]],
+    request_jobs=[dicts["tms_datamart_daily"]],
+    minimum_interval_seconds=60,
+)
+def sensor_tms_datamart_daily(context):
+    if datetime.now().hour % 12 == 0:
+        partition_keys = dicts["tms_datamart_daily"].partitions_def.get_partition_keys()
         last_partition = partition_keys[-1]
         yield RunRequest(partition_key=last_partition)
 
