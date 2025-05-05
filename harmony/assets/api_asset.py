@@ -1,4 +1,4 @@
-from dagster import asset, AssetExecutionContext, MaterializeResult, EnvVar, MetadataValue
+from dagster import asset, AssetExecutionContext, MaterializeResult, EnvVar, MetadataValue, BackfillPolicy
 from shared.resources import APIResource
 from shared.partitions import partition_12hourly
 from shared.utils.custom_translator import CustomPandasRun
@@ -7,6 +7,7 @@ import inspect
 
 @asset(
     partitions_def=partition_12hourly,
+    backfill_policy=BackfillPolicy.single_run(),
     pool="api_crm",
     key_prefix=["landings"],
     group_name="outbound_clipan_duitcair",
@@ -48,6 +49,7 @@ def outbound_clipan_duitcair_report_prospect_api(context: AssetExecutionContext,
 
 @asset(
     partitions_def=partition_12hourly,
+    backfill_policy=BackfillPolicy.single_run(),
     pool="api_crm",
     key_prefix=["landings"],
     group_name="outbound_clipan_duitcair",
@@ -89,6 +91,7 @@ def outbound_clipan_duitcair_report_prospect_timeframe_api(context: AssetExecuti
 
 @asset(
     partitions_def=partition_12hourly,
+    backfill_policy=BackfillPolicy.single_run(),
     pool="api_crm",
     key_prefix=["landings"],
     group_name="outbound_tam_concierge",
@@ -130,6 +133,7 @@ def outbound_tam_concierge_report_prospect_api(context: AssetExecutionContext, a
 
 @asset(
     partitions_def=partition_12hourly,
+    backfill_policy=BackfillPolicy.single_run(),
     pool="api_crm",
     key_prefix=["landings"],
     group_name="outbound_tam_concierge",
@@ -171,6 +175,7 @@ def outbound_tam_concierge_report_prospect_timeframe_api(context: AssetExecution
 
 @asset(
     partitions_def=partition_12hourly,
+    backfill_policy=BackfillPolicy.single_run(),
     pool="api_crm",
     key_prefix=["landings"],
     group_name="outbound_jmfi_mycash",
@@ -213,6 +218,7 @@ def outbound_jmfi_mycash_report_prospect_api(context: AssetExecutionContext, api
 
 @asset(
     partitions_def=partition_12hourly,
+    backfill_policy=BackfillPolicy.single_run(),
     pool="api_crm",
     key_prefix=["landings"],
     group_name="outbound_jmfi_mycash",
@@ -255,6 +261,7 @@ def outbound_jmfi_mycash_report_prospect_timeframe_api(context: AssetExecutionCo
 
 @asset(
     partitions_def=partition_12hourly,
+    backfill_policy=BackfillPolicy.single_run(),
     pool="api_crm",
     key_prefix=["landings"],
     group_name="outbound_jmfi_mycash",
@@ -296,6 +303,7 @@ def outbound_jmfi_mycash_golive_api(context: AssetExecutionContext, api_crm: API
 
 @asset(
     partitions_def=partition_12hourly,
+    backfill_policy=BackfillPolicy.single_run(),
     pool="api_crm",
     key_prefix=["landings"],
     group_name="outbound_jmfi_mycash",
