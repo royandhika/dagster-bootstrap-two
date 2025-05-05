@@ -63,6 +63,7 @@ with src as (
         ,tenor
         ,tenor_left
         ,tipe
+        ,valid_status
         ,uploaddate = getdate()
     from src 
     where rn = 1

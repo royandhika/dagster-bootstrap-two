@@ -30,7 +30,7 @@ concurrency:
   runs:
     max_concurrent_runs: 2
   pools:
-    default_limit: 4
+    default_limit: 1
 
 telemetry:
   enabled: false
