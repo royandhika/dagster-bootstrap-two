@@ -2,7 +2,7 @@
 	config(
 		materialized='incremental',
 		schema=env_var('ENV_SCHEMA') + '_dm',
-		unique_key=['agreement_no', 'notes'],
+		unique_key=['data_supply_id'],
         group='outbound_jmfi_mycash',
 		tags=['12hourly']
 	)
@@ -14,8 +14,8 @@ with src as (
         ,rn = row_number() over(partition by agreement_no, notes order by uploaddate desc)
     from {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_jmfi_mycash_golive_api') }}
 	{% if is_incremental() %}
-	where uploaddate >= '{{ var('min_date') }}'
-		and uploaddate <= '{{ var('max_date') }}'
+	where coalesce(date_progress_result, interest_date) >= '{{ var('min_date') }}'
+		and coalesce(date_progress_result, interest_date) <= '{{ var('max_date') }}'
 	{% endif %}
 )
 ,final as (
