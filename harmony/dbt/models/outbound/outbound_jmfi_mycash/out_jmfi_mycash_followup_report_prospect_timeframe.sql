@@ -17,8 +17,8 @@ with src as (
 		end) over(partition by data_supply_id)
 	from {{ ref('out_jmfi_mycash_report_prospect_timeframe') }}
 	{% if is_incremental() %}
-	where uploaddate >= '{{ var('min_date') }}'
-		and uploaddate <= '{{ var('max_date') }}'
+	where interaction_date >= '{{ var('min_date') }}'
+		and interaction_date <= '{{ var('max_date') }}'
 	{% endif %}
 )
 ,final as (

@@ -14,8 +14,8 @@ with src as (
         ,rn = row_number() over(partition by agreement_no, data_supply_id order by uploaddate desc)
     from {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_clipan_duitcair_report_prospect_api') }}
 	{% if is_incremental() %}
-	where uploaddate >= '{{ var('min_date') }}'
-		and uploaddate <= '{{ var('max_date') }}'
+	where coalesce(interaction_date, data_supply_date) >= '{{ var('min_date') }}'
+		and coalesce(interaction_date, data_supply_date) <= '{{ var('max_date') }}'
 	{% endif %}
 )
 ,final as (

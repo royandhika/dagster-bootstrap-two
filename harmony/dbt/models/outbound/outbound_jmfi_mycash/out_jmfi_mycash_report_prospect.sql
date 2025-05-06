@@ -14,8 +14,8 @@ with src as (
         ,rn = row_number() over(partition by agreement_no, data_supply_id order by uploaddate desc)
     from {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_jmfi_mycash_report_prospect_api') }}
 	{% if is_incremental() %}
-	where uploaddate >= '{{ var('min_date') }}'
-		and uploaddate <= '{{ var('max_date') }}'
+	where interaction_date >= '{{ var('min_date') }}'
+		and interaction_date <= '{{ var('max_date') }}'
 	{% endif %}
 )
 ,final as (
