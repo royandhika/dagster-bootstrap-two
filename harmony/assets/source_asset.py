@@ -1,9 +1,9 @@
-from shared.utils.custom_function import external_asset
+from shared.utils.custom_asset import make_external_asset
 
 
 external = [
     # TELEPHONY
-    *external_asset(
+    *make_external_asset(
         {"mysql"},
         "ecentrix_alpha",
         [
@@ -11,7 +11,7 @@ external = [
             "ecentrix_alpha_ecentrix_reference",
         ],
     ),
-    *external_asset(
+    *make_external_asset(
         {"mysql"},
         "ecentrix_bravo",
         [
@@ -19,7 +19,7 @@ external = [
             "ecentrix_bravo_ecentrix_reference",
         ],
     ),
-    *external_asset(
+    *make_external_asset(
         {"mysql"},
         "ecentrix_predictive",
         [
@@ -28,7 +28,7 @@ external = [
         ],
     ),
     # OUTBOUND
-    *external_asset(
+    *make_external_asset(
         {"mysql"},
         "outbound_mrsdso",
         [
@@ -40,7 +40,7 @@ external = [
             "outbound_mrsdso_cc_master_category",
         ],
     ),
-    *external_asset(
+    *make_external_asset(
         {"mysql"},
         "outbound_adm",
         [
@@ -52,7 +52,7 @@ external = [
             "outbound_adm_cc_master_category",
         ],
     ),
-    *external_asset(
+    *make_external_asset(
         {"mysql"},
         "outbound_ahm",
         [
@@ -64,7 +64,7 @@ external = [
             "outbound_ahm_cc_master_category",
         ],
     ),
-    *external_asset(
+    *make_external_asset(
         {"mysql"},
         "outbound_esvi",
         [
@@ -76,7 +76,7 @@ external = [
             "outbound_esvi_cc_master_category",
         ],
     ),
-    *external_asset(
+    *make_external_asset(
         {"mysql"},
         "outbound_tafteleacquisition",
         [
@@ -88,7 +88,7 @@ external = [
             "outbound_tafteleacquisition_cc_master_category",
         ],
     ),
-    *external_asset(
+    *make_external_asset(
         {"mysql"},
         "outbound_mrs_iso",
         [
@@ -99,7 +99,7 @@ external = [
             "outbound_mrs_iso_tms_master_category",
         ],
     ),
-    *external_asset(
+    *make_external_asset(
         {"mysql"},
         "outbound_deskcollfif",
         [
@@ -111,7 +111,7 @@ external = [
         ],
     ),
     # INBOUND
-    *external_asset(
+    *make_external_asset(
         {"mysql"},
         "inbound_awda",
         [
@@ -122,7 +122,7 @@ external = [
             "inbound_awda_cc_master_reference",
         ],
     ),
-    *external_asset(
+    *make_external_asset(
         {"mysql"},
         "inbound_awo",
         [
@@ -133,7 +133,7 @@ external = [
             "inbound_awo_cc_master_reference",
         ],
     ),
-    *external_asset(
+    *make_external_asset(
         {"mysql"},
         "inbound_nasmoco",
         [
@@ -144,7 +144,7 @@ external = [
             "inbound_nasmoco_cc_master_reference",
         ],
     ),
-    *external_asset(
+    *make_external_asset(
         {"mysql"},
         "inbound_taf",
         [
@@ -156,7 +156,7 @@ external = [
             "inbound_taf_wa_inbox",
         ],
     ),
-    *external_asset(
+    *make_external_asset(
         {"mysql"},
         "inbound_omni_astralife",
         [
@@ -164,7 +164,7 @@ external = [
             "inbound_omni_astralife_wa_inbox",
         ],
     ),
-    *external_asset(
+    *make_external_asset(
         {"mysql"},
         "inbound_shopanddrive_v4",
         [

@@ -1,4 +1,4 @@
-from dagster import AssetSpec, AssetKey, EnvVar
+from dagster import EnvVar
 from dagster._core.definitions.time_window_partitions import TimeWindow
 from datetime import datetime
 from pandas import DataFrame
@@ -7,18 +7,6 @@ from typing import Any, Literal
 import yaml
 import os
 import json
-
-
-def external_asset(kind: set[str], group:str, tables: list) -> list[AssetSpec]:
-    return [
-        AssetSpec(
-            key=AssetKey(["sources", table]),
-            # description=table["desc"],
-            group_name=group,
-            kinds=kind
-        )
-        for table in tables
-    ]
 
 
 def sling_yaml_dict(filename: str) -> dict[str, Any]:
