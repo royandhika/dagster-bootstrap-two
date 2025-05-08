@@ -1,0 +1,9 @@
+FROM nginx:stable-alpine
+
+RUN apk add --no-cache apache2-utils
+
+COPY ./nginx/entrypoint.sh /docker-entrypoint.sh
+COPY ./nginx/conf.d /etc/nginx/conf.d
+RUN chmod +x /docker-entrypoint.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]

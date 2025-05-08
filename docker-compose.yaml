@@ -65,8 +65,6 @@ services:
     container_name: dagster_webserver
     expose:
       - "${DAGSTER_PORT}"
-    ports:
-      - "${DAGSTER_PORT}:${DAGSTER_PORT}"
     env_file:
       - ./.env
     volumes: # Make docker client accessible so we can terminate containers from the webserver
@@ -107,6 +105,22 @@ services:
       dagster_postgresql:
         condition: service_healthy
       dagster_code_harmony:
+        condition: service_started
+
+  dagster_nginx:
+    build: 
+      dockerfile: ./nginx/Dockerfile_nginx
+    container_name: dagster_nginx
+    image: dagster_nginx_image
+    ports:
+      - "3500:80"
+    env_file:
+      - ./.env
+    restart: unless-stopped
+    networks:
+      - dagster-network
+    depends_on:
+      dagster_webserver:
         condition: service_started
 
 networks:

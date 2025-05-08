@@ -1,22 +1,18 @@
-from dagster import AssetExecutionContext
-from dagster_sling import sling_assets, SlingResource
-from shared.utils.custom_translator import CustomSlingTranslator
-from shared.utils.custom_function import sling_yaml_dict, sling_add_backfill
+from shared.utils.custom_asset import make_sling_asset_with_partition
 from shared.partitions import partition_hourly
 
 
-@sling_assets(
-    dagster_sling_translator=CustomSlingTranslator(),
-    replication_config=sling_yaml_dict("ecentrix_telephony.yaml"),
-    partitions_def=partition_hourly,
-    pool="sling",
-)
-def ecentrix_telephony(context: AssetExecutionContext, sling: SlingResource):
-    sling_path = sling_yaml_dict("ecentrix_telephony.yaml")
-    fixed_yaml = sling_add_backfill(sling_path, context.partition_time_window)
+slings = [
+    {
+        "name": "sling_ecentrix_telephony",
+        "sling_file": "ecentrix_telephony.yaml",
+        "partitions_def": partition_hourly
+    }
+]
 
-    yield from sling.replicate(
-        context=context,
-        dagster_sling_translator=CustomSlingTranslator(),
-        replication_config=fixed_yaml,
+for sling in slings:
+    globals()[sling["name"]] = make_sling_asset_with_partition(
+        name=sling["name"],
+        sling_file=sling["sling_file"],
+        partitions_def=sling["partitions_def"]
     )

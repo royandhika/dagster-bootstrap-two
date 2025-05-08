@@ -1,124 +1,48 @@
-from dagster import AssetExecutionContext
-from dagster_sling import sling_assets, SlingResource
-from shared.utils.custom_translator import CustomSlingTranslator
-from shared.utils.custom_function import sling_yaml_dict, sling_add_backfill
+from shared.utils.custom_asset import make_sling_asset_with_partition
 from shared.partitions import partition_hourly
 
 
-@sling_assets(
-    dagster_sling_translator=CustomSlingTranslator(),
-    replication_config=sling_yaml_dict("outbound_adm.yaml"),
-    partitions_def=partition_hourly,
-    pool="sling",
-)
-def outbound_adm(context: AssetExecutionContext, sling: SlingResource):
-    sling_path = sling_yaml_dict("outbound_adm.yaml")
-    fixed_yaml = sling_add_backfill(sling_path, context.partition_time_window)
+slings = [
+    {
+        "name": "sling_outbound_adm",
+        "sling_file": "outbound_adm.yaml",
+        "partitions_def": partition_hourly
+    },
+    {
+        "name": "sling_outbound_ahm",
+        "sling_file": "outbound_ahm.yaml",
+        "partitions_def": partition_hourly
+    },
+    {
+        "name": "sling_outbound_esvi",
+        "sling_file": "outbound_esvi.yaml",
+        "partitions_def": partition_hourly
+    },
+    {
+        "name": "sling_outbound_mrs_iso",
+        "sling_file": "outbound_mrs_iso.yaml",
+        "partitions_def": partition_hourly
+    },
+    {
+        "name": "sling_outbound_mrsdso",
+        "sling_file": "outbound_mrsdso.yaml",
+        "partitions_def": partition_hourly
+    },
+    {
+        "name": "sling_outbound_tafteleacquisition",
+        "sling_file": "outbound_tafteleacquisition.yaml",
+        "partitions_def": partition_hourly
+    },
+    {
+        "name": "sling_outbound_deskcollfif",
+        "sling_file": "outbound_deskcollfif.yaml",
+        "partitions_def": partition_hourly
+    },
+]
 
-    yield from sling.replicate(
-        context=context,
-        dagster_sling_translator=CustomSlingTranslator(),
-        replication_config=fixed_yaml,
-    )
-
-
-@sling_assets(
-    dagster_sling_translator=CustomSlingTranslator(),
-    replication_config=sling_yaml_dict("outbound_ahm.yaml"),
-    partitions_def=partition_hourly,
-    pool="sling",
-)
-def outbound_ahm(context: AssetExecutionContext, sling: SlingResource):
-    sling_path = sling_yaml_dict("outbound_ahm.yaml")
-    fixed_yaml = sling_add_backfill(sling_path, context.partition_time_window)
-
-    yield from sling.replicate(
-        context=context,
-        dagster_sling_translator=CustomSlingTranslator(),
-        replication_config=fixed_yaml,
-    )
-
-
-@sling_assets(
-    dagster_sling_translator=CustomSlingTranslator(),
-    replication_config=sling_yaml_dict("outbound_esvi.yaml"),
-    partitions_def=partition_hourly,
-    pool="sling",
-)
-def outbound_esvi(context: AssetExecutionContext, sling: SlingResource):
-    sling_path = sling_yaml_dict("outbound_esvi.yaml")
-    fixed_yaml = sling_add_backfill(sling_path, context.partition_time_window)
-
-    yield from sling.replicate(
-        context=context,
-        dagster_sling_translator=CustomSlingTranslator(),
-        replication_config=fixed_yaml,
-    )
-
-
-@sling_assets(
-    dagster_sling_translator=CustomSlingTranslator(),
-    replication_config=sling_yaml_dict("outbound_mrs_iso.yaml"),
-    partitions_def=partition_hourly,
-    pool="sling",
-)
-def outbound_mrs_iso(context: AssetExecutionContext, sling: SlingResource):
-    sling_path = sling_yaml_dict("outbound_mrs_iso.yaml")
-    fixed_yaml = sling_add_backfill(sling_path, context.partition_time_window)
-
-    yield from sling.replicate(
-        context=context,
-        dagster_sling_translator=CustomSlingTranslator(),
-        replication_config=fixed_yaml,
-    )
-
-
-@sling_assets(
-    dagster_sling_translator=CustomSlingTranslator(),
-    replication_config=sling_yaml_dict("outbound_mrsdso.yaml"),
-    partitions_def=partition_hourly,
-    pool="sling",
-)
-def outbound_mrsdso(context: AssetExecutionContext, sling: SlingResource):
-    sling_path = sling_yaml_dict("outbound_mrsdso.yaml")
-    fixed_yaml = sling_add_backfill(sling_path, context.partition_time_window)
-
-    yield from sling.replicate(
-        context=context,
-        dagster_sling_translator=CustomSlingTranslator(),
-        replication_config=fixed_yaml,
-    )
-
-
-@sling_assets(
-    dagster_sling_translator=CustomSlingTranslator(),
-    replication_config=sling_yaml_dict("outbound_tafteleacquisition.yaml"),
-    partitions_def=partition_hourly,
-    pool="sling",
-)
-def outbound_tafteleacquisition(context: AssetExecutionContext, sling: SlingResource):
-    sling_path = sling_yaml_dict("outbound_tafteleacquisition.yaml")
-    fixed_yaml = sling_add_backfill(sling_path, context.partition_time_window)
-
-    yield from sling.replicate(
-        context=context,
-        dagster_sling_translator=CustomSlingTranslator(),
-        replication_config=fixed_yaml,
-    )
-
-
-@sling_assets(
-    dagster_sling_translator=CustomSlingTranslator(),
-    replication_config=sling_yaml_dict("outbound_deskcollfif.yaml"),
-    partitions_def=partition_hourly,
-    pool="sling",
-)
-def outbound_deskcollfif(context: AssetExecutionContext, sling: SlingResource):
-    sling_path = sling_yaml_dict("outbound_deskcollfif.yaml")
-    fixed_yaml = sling_add_backfill(sling_path, context.partition_time_window)
-
-    yield from sling.replicate(
-        context=context,
-        dagster_sling_translator=CustomSlingTranslator(),
-        replication_config=fixed_yaml,
+for sling in slings:
+    globals()[sling["name"]] = make_sling_asset_with_partition(
+        name=sling["name"],
+        sling_file=sling["sling_file"],
+        partitions_def=sling["partitions_def"]
     )
