@@ -102,7 +102,8 @@ with prospect as (
 		cr.prospect_id
 		,cr.file_id
 		,cr.module
-        ,attempt = cr.module 
+        ,attempt = count(cr.module) over(partition by cr.prospect_id)
+        ,created_time = max(cr.created_time)
         ,max(case when cr.field_name_id = 'category_ticket_1' then mc.name end) [Connect Response]
 		,max(case when cr.field_name_id = 'category_ticket_2' then mc.name end) [Contact Response]
 		,max(case when cr.field_name_id = 'category_ticket_3' then mc.name end) [Campaign Status]
@@ -115,7 +116,13 @@ with prospect as (
     	from prospect p
     	where cr.file_id = p.file_id
 	)
-    group by cr.prospect_id, cr.file_id, cr.module, cr.created_time
+    group by cr.prospect_id, cr.file_id, cr.module
+)
+,response_detail_map as (
+    select 
+        *
+        ,sort = row_number() over(partition by prospect_id order by created_time desc)
+    from response_detail 
 )
 ,final as (
     select
@@ -188,7 +195,8 @@ with prospect as (
 	left join campaign_result c 
         on a.id = c.prospect_id 
 		and a.main_campaign = c.campaign_id
-	left join response_detail e 
+	left join response_detail_map e 
         on a.id = e.prospect_id 
+        and e.sort = 1
 )
 select * from final
