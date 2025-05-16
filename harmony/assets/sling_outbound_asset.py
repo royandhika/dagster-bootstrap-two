@@ -38,6 +38,11 @@ slings = [
         "sling_file": "outbound_deskcollfif.yaml",
         "partitions_def": partition_hourly
     },
+    {
+        "name": "sling_outbound_deskcolltaf",
+        "sling_file": "outbound_deskcolltaf.yaml",
+        "partitions_def": partition_hourly
+    },
 ]
 
 for sling in slings:

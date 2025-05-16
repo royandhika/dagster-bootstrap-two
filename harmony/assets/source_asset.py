@@ -110,6 +110,18 @@ external = [
             "outbound_deskcollfif_acs_reference",
         ],
     ),
+    *make_external_asset(
+        {"mysql"},
+        "outbound_deskcolltaf",
+        [
+            "outbound_deskcolltaf_acs_call_history_daily",
+            "outbound_deskcolltaf_acs_call_history_detail_daily",
+            "outbound_deskcolltaf_acs_customer_profile_ext",
+            "outbound_deskcolltaf_acs_reference",
+            "outbound_deskcolltaf_acs_class",
+            "outbound_deskcolltaf_acs_payment_today",
+        ],
+    ),
     # INBOUND
     *make_external_asset(
         {"mysql"},
