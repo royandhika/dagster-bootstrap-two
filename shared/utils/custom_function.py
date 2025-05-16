@@ -1,6 +1,6 @@
 from dagster import EnvVar
 from dagster._core.definitions.time_window_partitions import TimeWindow
-from datetime import datetime
+from datetime import datetime, timedelta
 from pandas import DataFrame
 from sqlalchemy import create_engine
 from typing import Any, Literal
@@ -30,14 +30,14 @@ def sling_yaml_dict(filename: str) -> dict[str, Any]:
     return inject_env(config)
 
 
-def sling_add_backfill(config: dict, time_window: TimeWindow) -> dict:
+def sling_add_backfill(yaml: dict, time_window: TimeWindow) -> dict:
     start, end = time_window
-
+    start -= timedelta(minutes=30)
     range_date = f"{datetime.strftime(start, '%Y-%m-%d %H:%M')},{datetime.strftime(end, '%Y-%m-%d %H:%M')}"
     
-    config["defaults"]["source_options"]["range"] = range_date
+    yaml["defaults"]["source_options"]["range"] = range_date
 
-    return config
+    return yaml
 
 
 def pandas_write_table(table_name: str, method: Literal["fail", "replace", "append"], data: DataFrame):
