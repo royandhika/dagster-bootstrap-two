@@ -1,0 +1,21 @@
+source: slave
+target: itsql
+
+defaults:
+  object: '{ENV_SCHEMA}_dl.outbound_esvi_{stream_table}_intelix'
+  mode: backfill
+  primary_key: [id]
+  update_key: created_time
+  source_options:
+    range: '{START},{END}'
+
+env:
+  SLING_LOADED_AT_COLUMN: timestamp
+
+streams:
+  dyn_outbound_esvi.tms_prospect_detail:
+    meta:
+      dagster:
+        asset_key: 'outbound_esvi_tms_prospect_detail_intelix'
+        deps: 'outbound_esvi_tms_prospect_detail'
+        group: 'outbound_esvi'

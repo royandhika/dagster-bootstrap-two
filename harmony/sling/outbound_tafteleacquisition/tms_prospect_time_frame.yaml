@@ -1,0 +1,21 @@
+source: slave
+target: itsql
+
+defaults:
+  object: '{ENV_SCHEMA}_dl.outbound_tafteleacquisition_{stream_table}_intelix'
+  mode: backfill
+  primary_key: [id]
+  update_key: created_time
+  source_options:
+    range: '{START},{END}'
+
+env:
+  SLING_LOADED_AT_COLUMN: timestamp
+
+streams:
+  dyn_outbound_tafteleacquisition.tms_prospect_time_frame:
+    meta:
+      dagster:
+        asset_key: 'outbound_tafteleacquisition_tms_prospect_time_frame_intelix'
+        deps: 'outbound_tafteleacquisition_tms_prospect_time_frame'
+        group: 'outbound_tafteleacquisition'

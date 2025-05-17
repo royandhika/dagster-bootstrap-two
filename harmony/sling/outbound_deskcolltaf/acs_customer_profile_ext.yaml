@@ -1,0 +1,21 @@
+source: slave
+target: itsql
+
+defaults:
+  object: '{ENV_SCHEMA}_dl.outbound_deskcolltaf_{stream_table}_intelix'
+  mode: backfill
+  primary_key: [contract_number]
+  update_key: data_date
+  source_options:
+    range: '{START},{END}'
+
+env:
+  SLING_LOADED_AT_COLUMN: timestamp
+
+streams:
+  outbound_deskcolltaf_pre.acs_customer_profile_ext:
+    meta:
+      dagster:
+        asset_key: 'outbound_deskcolltaf_acs_customer_profile_ext_intelix'
+        deps: 'outbound_deskcolltaf_acs_customer_profile_ext'
+        group: 'outbound_deskcolltaf'

@@ -1,0 +1,21 @@
+source: slave
+target: itsql
+
+defaults:
+  object: '{ENV_SCHEMA}_dl.inbound_nasmoco_{stream_table}_intelix'
+  mode: backfill
+  primary_key: [customer_id]
+  update_key: created_time
+  source_options:
+    range: '{START},{END}'
+
+env:
+  SLING_LOADED_AT_COLUMN: timestamp
+
+streams:
+  inbound_nasmoco.cc_master_customer:
+    meta:
+      dagster:
+        asset_key: 'inbound_nasmoco_cc_master_customer_intelix'
+        deps: 'inbound_nasmoco_cc_master_customer'
+        group: 'inbound_nasmoco'

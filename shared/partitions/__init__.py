@@ -1,6 +1,7 @@
 from dagster import DailyPartitionsDefinition, TimeWindowPartitionsDefinition
 from datetime import datetime
 
+
 partition_start_date = "2024-01-01"
 partition_start_hour = "2024-01-01-00:00"
 partition_start_datetime = datetime(2024, 1, 1)

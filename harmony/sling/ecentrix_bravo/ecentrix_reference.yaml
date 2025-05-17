@@ -1,0 +1,19 @@
+source: slave
+target: itsql
+
+defaults:
+  object: '{ENV_SCHEMA}_dl.{stream_schema}_{stream_table}_intelix'
+  mode: full-refresh
+  source_options:
+    range: '{START},{END}'
+
+env:
+  SLING_LOADED_AT_COLUMN: timestamp
+
+streams:
+  ecentrix_bravo.ecentrix_reference:
+    meta:
+      dagster:
+        asset_key: 'ecentrix_bravo_ecentrix_reference_intelix'
+        deps: 'ecentrix_bravo_ecentrix_reference'
+        group: 'ecentrix_bravo'

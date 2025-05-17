@@ -1,0 +1,21 @@
+source: slave
+target: itsql
+
+defaults:
+  object: '{ENV_SCHEMA}_dl.outbound_adm_{stream_table}_intelix'
+  mode: backfill
+  primary_key: [id]
+  update_key: created_time
+  source_options:
+    range: '{START},{END}'
+
+env:
+  SLING_LOADED_AT_COLUMN: timestamp
+
+streams:
+  dyn_outbound_adm.cc_master_category:
+    meta:
+      dagster:
+        asset_key: 'outbound_adm_cc_master_category_intelix'
+        deps: 'outbound_adm_cc_master_category'
+        group: 'outbound_adm'

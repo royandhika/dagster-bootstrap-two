@@ -1,0 +1,19 @@
+source: slave
+target: itsql
+
+defaults:
+  object: '{ENV_SCHEMA}_dl.inbound_taf_{stream_table}_intelix'
+  mode: full-refresh
+  source_options:
+    range: '{START},{END}'
+
+env:
+  SLING_LOADED_AT_COLUMN: timestamp
+
+streams:
+  inbound_taf.cc_master_reference:
+    meta:
+      dagster:
+        asset_key: 'inbound_taf_cc_master_reference_intelix'
+        deps: 'inbound_taf_cc_master_reference'
+        group: 'inbound_taf'

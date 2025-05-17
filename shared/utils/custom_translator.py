@@ -55,3 +55,4 @@ class CustomDbtRun(Config):
 
 class CustomPandasRun(Config):
     method: Literal["fail", "replace", "append"] = "append"
+    full_refresh: bool = False

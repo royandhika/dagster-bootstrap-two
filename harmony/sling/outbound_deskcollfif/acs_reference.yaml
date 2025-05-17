@@ -1,0 +1,19 @@
+source: slave
+target: itsql
+
+defaults:
+  object: '{ENV_SCHEMA}_dl.outbound_deskcollfif_{stream_table}_intelix'
+  mode: full-refresh
+  source_options:
+    range: '{START},{END}'
+
+env:
+  SLING_LOADED_AT_COLUMN: timestamp
+
+streams:
+  outbound_deskcollfif.acs_reference:
+    meta:
+      dagster:
+        asset_key: 'outbound_deskcollfif_acs_reference_intelix'
+        deps: 'outbound_deskcollfif_acs_reference'
+        group: 'outbound_deskcollfif'

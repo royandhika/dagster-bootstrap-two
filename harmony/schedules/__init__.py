@@ -1,16 +1,13 @@
-# from dagster import build_schedule_from_partitioned_job, ScheduleDefinition
-# from jobs import jobs
+from dagster import build_schedule_from_partitioned_job
+from jobs import dicts
 
-# schedule_outbound_mrsdso = build_schedule_from_partitioned_job(job_outbound_mrsdso)
 
-# schedule_ecentrix_alpha = build_schedule_from_partitioned_job(job_ecentrix_alpha)
+schedules = []
 
-# schedules = [
-#     build_schedule_from_partitioned_job(job=config[""])
-# ]
-# schedules = []
-# for job in jobs:
-#     schedule = ScheduleDefinition(
-#         job=job,
-#         cron_schedule=
-#     )
+for job_name, job in dicts.items():
+    if "datalanding" in job_name: 
+        schedule = build_schedule_from_partitioned_job(
+            job=job,
+            name=f"schedule_{job_name}"
+        )
+        schedules.append(schedule)

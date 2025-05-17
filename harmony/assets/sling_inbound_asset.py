@@ -5,39 +5,75 @@ from shared.partitions import partition_2hourly
 slings = [
     {
         "name": "sling_inbound_awda",
-        "sling_file": "inbound_awda.yaml",
-        "partitions_def": partition_2hourly
+        "partitions_def": partition_2hourly,
+        "files": [
+            "inbound_awda/cc_master_category.yaml",
+            "inbound_awda/cc_master_customer.yaml",
+            "inbound_awda/cc_master_reference.yaml",
+            "inbound_awda/cc_queue_detail.yaml",
+            "inbound_awda/cc_queue.yaml",
+        ],
     },
     {
         "name": "sling_inbound_awo",
-        "sling_file": "inbound_awo.yaml",
-        "partitions_def": partition_2hourly
+        "partitions_def": partition_2hourly,
+        "files": [
+            "inbound_awo/cc_master_category.yaml",
+            "inbound_awo/cc_master_customer.yaml",
+            "inbound_awo/cc_master_reference.yaml",
+            "inbound_awo/cc_queue_detail.yaml",
+            "inbound_awo/cc_queue.yaml",
+        ],
     },
     {
         "name": "sling_inbound_nasmoco",
-        "sling_file": "inbound_nasmoco.yaml",
-        "partitions_def": partition_2hourly
+        "partitions_def": partition_2hourly,
+        "files": [
+            "inbound_nasmoco/cc_master_category.yaml",
+            "inbound_nasmoco/cc_master_customer.yaml",
+            "inbound_nasmoco/cc_master_reference.yaml",
+            "inbound_nasmoco/cc_queue_detail.yaml",
+            "inbound_nasmoco/cc_queue.yaml",
+        ],
     },
     {
         "name": "sling_inbound_omni_astralife",
-        "sling_file": "inbound_omni_astralife.yaml",
-        "partitions_def": partition_2hourly
+        "partitions_def": partition_2hourly,
+        "files": [
+            "inbound_omni_astralife/cc_queue.yaml",
+            "inbound_omni_astralife/wa_inbox.yaml",
+        ],
     },
     {
         "name": "sling_inbound_shopanddrive_v4",
-        "sling_file": "inbound_shopanddrive_v4.yaml",
-        "partitions_def": partition_2hourly
+        "partitions_def": partition_2hourly,
+        "files": [
+            "inbound_shopanddrive_v4/cc_master_category.yaml",
+            "inbound_shopanddrive_v4/cc_master_customer.yaml",
+            "inbound_shopanddrive_v4/cc_master_reference.yaml",
+            "inbound_shopanddrive_v4/cc_queue_detail.yaml",
+            "inbound_shopanddrive_v4/cc_queue.yaml",
+        ],
     },
     {
         "name": "sling_inbound_taf",
-        "sling_file": "inbound_taf.yaml",
-        "partitions_def": partition_2hourly
+        "partitions_def": partition_2hourly,
+        "files": [
+            "inbound_taf/cc_master_category.yaml",
+            "inbound_taf/cc_master_customer.yaml",
+            "inbound_taf/cc_master_reference.yaml",
+            "inbound_taf/cc_queue_detail.yaml",
+            "inbound_taf/cc_queue.yaml",
+            "inbound_taf/wa_inbox.yaml",
+        ],
     },
 ]
 
 for sling in slings:
-    globals()[sling["name"]] = make_sling_asset_with_partition(
-        name=sling["name"],
-        sling_file=sling["sling_file"],
-        partitions_def=sling["partitions_def"]
-    )
+    for file in sling["files"]:
+        ops_name = sling["name"] + "_" + file.split('/')[-1].split('.')[0]
+        globals()[ops_name] = make_sling_asset_with_partition(
+            name=ops_name,
+            sling_file=file,
+            partitions_def=sling["partitions_def"]
+        )

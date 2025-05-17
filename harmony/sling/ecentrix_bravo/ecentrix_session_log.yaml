@@ -1,0 +1,21 @@
+source: slave
+target: itsql
+
+defaults:
+  object: '{ENV_SCHEMA}_dl.{stream_schema}_{stream_table}_intelix'
+  mode: backfill
+  primary_key: [id]
+  update_key: last_update_time
+  source_options:
+    range: '{START},{END}'
+
+env:
+  SLING_LOADED_AT_COLUMN: timestamp
+
+streams:
+  ecentrix_bravo.ecentrix_session_log:
+    meta:
+      dagster:
+        asset_key: 'ecentrix_bravo_ecentrix_session_log_intelix'
+        deps: 'ecentrix_bravo_ecentrix_session_log'
+        group: 'ecentrix_bravo'
