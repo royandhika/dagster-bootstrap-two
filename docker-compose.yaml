@@ -31,10 +31,17 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile_harmony
+      args:
+        HTTP_PROXY: ${HTTP_PROXY}
+        HTTPS_PROXY: ${HTTPS_PROXY}
+        NO_PROXY: ${NO_PROXY}
     container_name: dagster_code_harmony
     image: dagster_code_harmony_image
     restart: always
     environment:
+      http_proxy: ${HTTP_PROXY}
+      https_proxy: ${HTTPS_PROXY}
+      no_proxy: ${NO_PROXY}
       DAGSTER_CURRENT_IMAGE: "dagster_code_harmony_image"
       PYTHONPATH: "/opt/dagster/app"
     env_file:
@@ -53,6 +60,10 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile_daemon
+      args:
+        HTTP_PROXY: ${HTTP_PROXY}
+        HTTPS_PROXY: ${HTTPS_PROXY}
+        NO_PROXY: ${NO_PROXY}
     image: dagster_webserver_image
     entrypoint:
       - dagster-webserver
@@ -86,6 +97,10 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile_daemon
+      args:
+        HTTP_PROXY: ${HTTP_PROXY}
+        HTTPS_PROXY: ${HTTPS_PROXY}
+        NO_PROXY: ${NO_PROXY}
     image: dagster_daemon_image
     entrypoint:
       - dagster-daemon
