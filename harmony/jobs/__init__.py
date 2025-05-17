@@ -19,7 +19,8 @@ job_configs = [
             | AssetSelection.groups("outbound_mrs_iso") & AssetSelection.key_prefixes("landings")
             | AssetSelection.groups("outbound_mrsdso") & AssetSelection.key_prefixes("landings")
             | AssetSelection.groups("outbound_tafteleacquisition") & AssetSelection.key_prefixes("landings")
-            | AssetSelection.groups("outbound_deskcollfif") & AssetSelection.key_prefixes("landings"),
+            | AssetSelection.groups("outbound_deskcollfif") & AssetSelection.key_prefixes("landings")
+            | AssetSelection.groups("outbound_deskcolltaf") & AssetSelection.key_prefixes("landings"),
         "partitions_def": partition_hourly
     },
     {
@@ -45,7 +46,8 @@ job_configs = [
     {
         "name": "tms_datamart_3hourly",
         "selection":
-            AssetSelection.groups("outbound_tafteleacquisition") & AssetSelection.key_prefixes("marts"),
+            AssetSelection.groups("outbound_tafteleacquisition") & AssetSelection.key_prefixes("marts")
+            | AssetSelection.groups("outbound_deskcolltaf") & AssetSelection.key_prefixes("marts"),
         "partitions_def": partition_3hourly
     },
     {

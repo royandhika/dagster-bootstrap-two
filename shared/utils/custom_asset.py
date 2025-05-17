@@ -4,6 +4,7 @@ from dagster_sling import sling_assets, SlingResource
 from shared.utils.custom_translator import CustomDbtTranslator, CustomDbtRun, CustomSlingTranslator
 from shared.utils.custom_function import sling_yaml_dict, sling_add_backfill
 from shared.resources import path_dbt
+from datetime import timedelta
 import json
 
 
@@ -18,6 +19,7 @@ def make_dbt_asset_with_partition(name: str, select: str, partitions_def: Partit
     )
     def _dbt_asset(context: AssetExecutionContext, dbt: DbtCliResource, config: CustomDbtRun):
         start, end = context.partition_time_window
+        start -= timedelta(minutes=30)
         dbt_vars = {
             "min_date": start.strftime('%Y-%m-%d %H:%M:%S'), 
             "max_date": end.strftime('%Y-%m-%d %H:%M:%S')

@@ -24,6 +24,11 @@ dbt_outbound = [
         "partitions_def": partition_12hourly
     },
     {
+        "name": "dbt_outbound_deskcolltaf",
+        "select": "group:outbound_deskcolltaf",
+        "partitions_def": partition_3hourly
+    },
+    {
         "name": "dbt_outbound_esvi",
         "select": "group:outbound_esvi",
         "partitions_def": partition_12hourly
