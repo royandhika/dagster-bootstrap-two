@@ -13,7 +13,7 @@ env:
   SLING_LOADED_AT_COLUMN: timestamp
 
 streams:
-  dyn_outbound_tafteleacquisition.cc_master_category:
+  outbound_tafteleacquisition.cc_master_category:
     meta:
       dagster:
         asset_key: 'outbound_tafteleacquisition_cc_master_category_intelix'

@@ -13,7 +13,7 @@ env:
   SLING_LOADED_AT_COLUMN: timestamp
 
 streams:
-  dyn_outbound_tafteleacquisition.tms_prospect_campaign_result:
+  outbound_tafteleacquisition.tms_prospect_campaign_result:
     meta:
       dagster:
         asset_key: 'outbound_tafteleacquisition_tms_prospect_campaign_result_intelix'
