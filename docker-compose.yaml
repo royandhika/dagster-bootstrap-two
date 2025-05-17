@@ -125,6 +125,10 @@ services:
   dagster_nginx:
     build: 
       dockerfile: ./nginx/Dockerfile_nginx
+      args:
+        HTTP_PROXY: ${HTTP_PROXY}
+        HTTPS_PROXY: ${HTTPS_PROXY}
+        NO_PROXY: ${NO_PROXY}
     container_name: dagster_nginx
     image: dagster_nginx_image
     ports:
