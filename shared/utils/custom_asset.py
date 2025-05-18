@@ -13,7 +13,8 @@ from dagster import (
     run_status_sensor,
     DagsterRunStatus,
     JobDefinition,
-    RunRequest
+    RunRequest,
+    SkipReason
 )
 from dagster_dbt import dbt_assets, DbtCliResource
 from dagster_sling import sling_assets, SlingResource
@@ -95,9 +96,12 @@ def make_dbt_sensors_with_partition(name: str, monitored_jobs: list[JobDefinitio
             should_run = datetime.now().hour % interval == 0
                     
         if should_run:
-            partition_keys = request_jobs.partitions_def.get_partition_keys() # type: ignore
+            assert request_jobs[0].partitions_def is not None
+            partition_keys = request_jobs[0].partitions_def.get_partition_keys() 
             last_partition = partition_keys[-1]
             yield RunRequest(partition_key=last_partition)
+        else:
+            yield SkipReason(f"Not yet, current time is {datetime.now().strftime('%H:%M')}")
     
     return _sensor
 

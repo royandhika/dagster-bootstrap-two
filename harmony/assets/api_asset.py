@@ -1,6 +1,7 @@
 from dagster import asset, AssetExecutionContext, MaterializeResult, EnvVar, MetadataValue, BackfillPolicy
 from shared.resources import APIResource
 from shared.partitions import partition_12hourly
+from datetime import timedelta
 from shared.utils.custom_translator import CustomPandasRun
 import inspect
 
@@ -20,6 +21,7 @@ def outbound_clipan_duitcair_report_prospect_api(context: AssetExecutionContext,
     project = "clipan_duitcair"
     url = "https://api.astraworld.info/clipan/api/v2/supply/last-response"
     start, end = context.partition_time_window
+    start -= timedelta(minutes=30)
     
     types = ["call_date", "data_supply_date"]
     count = 0
@@ -62,7 +64,8 @@ def outbound_clipan_duitcair_report_prospect_timeframe_api(context: AssetExecuti
     project = "clipan_duitcair"
     url = "https://api.astraworld.info/clipan/api/v2/supply/time-frame"
     start, end = context.partition_time_window
-
+    start -= timedelta(minutes=30)
+    
     types = ["call_date"]
     count = 0
     for type in types:
@@ -104,6 +107,7 @@ def outbound_tam_concierge_report_prospect_api(context: AssetExecutionContext, a
     project = "tam_concierge"
     url = "https://api.astraworld.info/tam/api/v2/supply/last-response"
     start, end = context.partition_time_window
+    start -= timedelta(minutes=30)
     
     types = ["call_date", "data_supply_date"]
     count = 0
@@ -146,6 +150,7 @@ def outbound_tam_concierge_report_prospect_timeframe_api(context: AssetExecution
     project = "tam_concierge"
     url = "https://api.astraworld.info/tam/api/v2/supply/time-frame"
     start, end = context.partition_time_window
+    start -= timedelta(minutes=30)
     
     types = ["call_date"]
     count = 0
@@ -188,6 +193,7 @@ def outbound_jmfi_mycash_report_prospect_api(context: AssetExecutionContext, api
     project = "jmfi_mycash"
     url = "https://api-jmfi.astraworld.info/api/v1/interaction"
     start, end = context.partition_time_window
+    start -= timedelta(minutes=30)
     
     types = ["4W", "2W"]
     count = 0
@@ -231,6 +237,7 @@ def outbound_jmfi_mycash_report_prospect_timeframe_api(context: AssetExecutionCo
     project = "jmfi_mycash"
     url = "https://api-jmfi.astraworld.info/api/v1/interaction"
     start, end = context.partition_time_window
+    start -= timedelta(minutes=30)
     
     types = ["4W", "2W"]
     count = 0
@@ -274,6 +281,7 @@ def outbound_jmfi_mycash_golive_api(context: AssetExecutionContext, api_crm: API
     project = "jmfi_mycash"
     url = "https://api-jmfi.astraworld.info/api/v1/go-live"
     start, end = context.partition_time_window
+    start -= timedelta(minutes=30)
     
     types = ["4W", "2W"]
     count = 0
@@ -316,6 +324,7 @@ def outbound_jmfi_mycash_supply_api(context: AssetExecutionContext, api_crm: API
     project = "jmfi_mycash"
     url = "https://api-jmfi.astraworld.info/api/v1/supply"
     start, end = context.partition_time_window
+    start -= timedelta(minutes=30)
     
     types = ["4W", "2W"]
     count = 0
