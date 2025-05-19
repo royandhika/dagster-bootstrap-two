@@ -28,7 +28,7 @@ scheduler:
 
 concurrency:
   runs:
-    max_concurrent_runs: 4
+    max_concurrent_runs: 8
   pools:
     default_limit: 1
 
