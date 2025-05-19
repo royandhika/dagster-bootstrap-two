@@ -101,7 +101,7 @@ def make_dbt_sensors_with_partition(name: str, monitored_jobs: list[JobDefinitio
             last_partition = partition_keys[-1]
             yield RunRequest(partition_key=last_partition)
         else:
-            yield SkipReason(f"Not yet, current time is {datetime.now().strftime('%H:%M')}")
+            yield SkipReason(f"Current hour is {datetime.now().strftime('%H')}")
     
     return _sensor
 
