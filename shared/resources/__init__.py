@@ -1,12 +1,14 @@
 from pathlib import Path
-from dagster import EnvVar, ConfigurableResource
+from dagster import EnvVar, ConfigurableResource, InitResourceContext
 from dagster_dbt import DbtProject, DbtCliResource
 from dagster_sling import SlingConnectionResource, SlingResource
-from typing import Tuple, Optional, Literal
+from typing import Tuple, Optional, Literal, Any
 from shared.resources.api_config import API_LIST_PROJECTS
 from shared.utils.custom_function import pandas_write_table
-from pandas import DataFrame
+from pandas import DataFrame, read_sql_query
 from requests import post, auth, request
+from sqlalchemy import create_engine
+from pydantic import PrivateAttr
 
 
 sling_itsql_conn = SlingConnectionResource(
@@ -88,3 +90,38 @@ class APIResource(ConfigurableResource):
         return data
 
 resource_api = APIResource()
+
+
+class PSSResource(ConfigurableResource):
+    host: str = EnvVar('PSS_HOST')
+    port: str = EnvVar('PSS_PORT')
+    user: str = EnvVar('PSS_USER')
+    password: str = EnvVar('PSS_PASS')
+    _engine: Any = PrivateAttr()
+    
+    def setup_for_execution(self, context: InitResourceContext) -> None:
+        conn_string = f"mssql+pyodbc://{self.user}:{self.password}@{self.host}:{self.port}/PSS4WMASTER?driver=ODBC+Driver+17+for+SQL+Server&TrustServerCertificate=yes"
+        self._engine = create_engine(conn_string)
+    
+    def read_table(
+            self, 
+            query: str, 
+            params: tuple[Any, ...],
+            table_name: str,
+            pandas_method: Literal["fail", "replace", "append"], 
+    ) -> DataFrame:
+        df = read_sql_query(
+            sql=query,
+            con=self._engine, 
+            params=params
+        )
+
+        pandas_write_table(
+            table_name=table_name,
+            method=pandas_method,
+            data=df
+        )
+
+        return df
+    
+resource_pss = PSSResource()

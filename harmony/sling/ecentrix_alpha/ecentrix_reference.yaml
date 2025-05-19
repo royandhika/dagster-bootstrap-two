@@ -1,0 +1,21 @@
+source: slave
+target: itsql
+
+defaults:
+  object: '{ENV_SCHEMA}_dl.{stream_schema}_{stream_table}_intelix'
+  mode: full-refresh
+  source_options:
+    range: '{START},{END}'
+  target_options:
+    table_tmp: '{ENV_SCHEMA}_dl.{stream_schema}_{stream_table}_intelix_tmp_{run_timestamp}'
+
+env:
+  SLING_LOADED_AT_COLUMN: timestamp
+
+streams:
+  ecentrix_alpha.ecentrix_reference:
+    meta:
+      dagster:
+        asset_key: 'ecentrix_alpha_ecentrix_reference_intelix'
+        deps: 'ecentrix_alpha_ecentrix_reference'
+        group: 'ecentrix_alpha'

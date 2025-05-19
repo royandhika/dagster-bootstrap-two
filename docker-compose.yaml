@@ -13,6 +13,7 @@ services:
       - "5433:5432"
     networks:
       - dagster-network
+    restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U awopro11 -d dagster"]
       interval: 10s
@@ -20,13 +21,15 @@ services:
       retries: 5
     volumes:
       - dagster-pg-volume:/var/lib/postgresql/data
+    logging:
+      driver: "local"
 
   # This service runs the gRPC server that loads your user code, in both dagster-webserver
   # and dagster-daemon. By setting DAGSTER_CURRENT_IMAGE to its own image, we tell the
   # run launcher to use this same image when launching runs in a new container as well.
   # Multiple containers like this can be deployed separately - each just needs to run on
   # its own port, and have its own entry in the workspace.yaml file that's loaded by the
-      # webserver.
+  # webserver.
   dagster_code_harmony:
     build:
       context: .
@@ -39,9 +42,6 @@ services:
     image: dagster_code_harmony_image
     restart: always
     environment:
-      http_proxy: ${HTTP_PROXY}
-      https_proxy: ${HTTPS_PROXY}
-      no_proxy: ${NO_PROXY}
       DAGSTER_CURRENT_IMAGE: "dagster_code_harmony_image"
       PYTHONPATH: "/opt/dagster/app"
     env_file:
@@ -52,6 +52,8 @@ services:
       - ./harmony:/opt/dagster/app
     networks:
       - dagster-network
+    logging:
+      driver: "local"
 
   # This service runs dagster-webserver, which loads your user code from the user code container.
   # Since our instance uses the QueuedRunCoordinator, any runs submitted from the webserver will be put on
@@ -65,6 +67,7 @@ services:
         HTTPS_PROXY: ${HTTPS_PROXY}
         NO_PROXY: ${NO_PROXY}
     image: dagster_webserver_image
+    restart: always
     entrypoint:
       - dagster-webserver
       - -h
@@ -85,6 +88,8 @@ services:
       - ./workspace.yaml:/opt/dagster/dagster_home/workspace.yaml
     networks:
       - dagster-network
+    logging:
+      driver: "local"
     depends_on:
       dagster_postgresql:
         condition: service_healthy
@@ -106,7 +111,7 @@ services:
       - dagster-daemon
       - run
     container_name: dagster_daemon
-    restart: on-failure
+    restart: always
     env_file:
       - ./.env
     volumes: # Make docker client accessible so we can launch containers using host docker
@@ -116,6 +121,8 @@ services:
       - ./workspace.yaml:/opt/dagster/dagster_home/workspace.yaml
     networks:
       - dagster-network
+    logging:
+      driver: "local"
     depends_on:
       dagster_postgresql:
         condition: service_healthy
@@ -135,9 +142,11 @@ services:
       - "3500:80"
     env_file:
       - ./.env
-    restart: unless-stopped
+    restart: always
     networks:
       - dagster-network
+    logging:
+      driver: "local"
     depends_on:
       dagster_webserver:
         condition: service_started

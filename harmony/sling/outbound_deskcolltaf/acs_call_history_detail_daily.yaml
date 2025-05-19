@@ -1,0 +1,23 @@
+source: slave
+target: itsql
+
+defaults:
+  object: '{ENV_SCHEMA}_dl.outbound_deskcolltaf_{stream_table}_intelix'
+  mode: backfill
+  primary_key: [call_history_id]
+  update_key: created_time
+  source_options:
+    range: '{START},{END}'
+  target_options:
+    table_tmp: '{ENV_SCHEMA}_dl.outbound_deskcolltaf_{stream_table}_intelix_tmp_{run_timestamp}'
+
+env:
+  SLING_LOADED_AT_COLUMN: timestamp
+
+streams:
+  outbound_deskcolltaf_pre.acs_call_history_detail_daily:
+    meta:
+      dagster:
+        asset_key: 'outbound_deskcolltaf_acs_call_history_detail_daily_intelix'
+        deps: 'outbound_deskcolltaf_acs_call_history_detail_daily'
+        group: 'outbound_deskcolltaf'

@@ -1,0 +1,96 @@
+source: slave
+target: itsql
+
+defaults:
+  object: '{ENV_SCHEMA}_dl.inbound_trac_v4_{stream_table}_intelix'
+  mode: backfill
+  primary_key: [id]
+  update_key: created_time
+  source_options:
+    range: '{START},{END}'
+
+env:
+  SLING_LOADED_AT_COLUMN: timestamp
+
+streams:
+  inbound_trac_v4.cc_queue:
+    update_key: modified_time
+    sql: |
+      WITH source AS (
+        SELECT
+          *
+          ,COALESCE(info_lastupdate_time, created_time) AS modified_time
+        FROM {stream_schema}.{stream_table}
+      )
+      SELECT
+        *
+      FROM source
+      WHERE {incremental_where_cond}
+      ORDER BY modified_time
+    meta:
+      dagster:
+        asset_key: 'inbound_trac_v4_cc_queue_intelix'
+        deps: 'inbound_trac_v4_cc_queue'
+        group: 'inbound_trac_v4'
+
+  inbound_trac_v4.cc_queue_detail:
+    meta:
+      dagster:
+        asset_key: 'inbound_trac_v4_cc_queue_detail_intelix'
+        deps: 'inbound_trac_v4_cc_queue_detail'
+        group: 'inbound_trac_v4'
+
+  inbound_trac_v4.cc_master_category:
+    meta:
+      dagster:
+        asset_key: 'inbound_trac_v4_cc_master_category_intelix'
+        deps: 'inbound_trac_v4_cc_master_category'
+        group: 'inbound_trac_v4'
+
+  inbound_trac_v4.cc_master_reference:
+    mode: full-refresh
+    meta:
+      dagster:
+        asset_key: 'inbound_trac_v4_cc_master_reference_intelix'
+        deps: 'inbound_trac_v4_cc_master_reference'
+        group: 'inbound_trac_v4'
+
+  inbound_trac_v4.cc_user:
+    update_key: modified_time
+    sql: |
+      WITH source AS (
+        SELECT
+          *
+          ,COALESCE(updated_time, created_time) AS modified_time
+        FROM {stream_schema}.{stream_table}
+      )
+      SELECT
+        *
+      FROM source
+      WHERE {incremental_where_cond}
+      ORDER BY modified_time
+    meta:
+      dagster:
+        asset_key: 'inbound_trac_v4_cc_user_intelix'
+        deps: 'inbound_trac_v4_cc_user'
+        group: 'inbound_trac_v4'
+
+  inbound_trac_v4.cc_ticket_task:
+    update_key: modified_time
+    sql: |
+      WITH source AS (
+        SELECT
+          *
+          ,COALESCE(response_time, assign_time) AS modified_time
+        FROM {stream_schema}.{stream_table}
+      )
+      SELECT
+        *
+      FROM source
+      WHERE {incremental_where_cond}
+      ORDER BY modified_time
+    meta:
+      dagster:
+        asset_key: 'inbound_trac_v4_cc_ticket_task_intelix'
+        deps: 'inbound_trac_v4_cc_ticket_task'
+        group: 'inbound_trac_v4'

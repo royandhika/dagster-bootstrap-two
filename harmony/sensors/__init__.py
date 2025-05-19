@@ -1,63 +1,123 @@
-from dagster import run_status_sensor, RunRequest, DagsterRunStatus
+from shared.utils.custom_asset import make_dbt_sensors_with_partition
 from jobs import dicts
-from datetime import datetime
 
 
-@run_status_sensor(
-    run_status=DagsterRunStatus.SUCCESS,
-    monitored_jobs=[dicts["tms_datalanding_hourly"]],
-    request_jobs=[dicts["tms_datamart_3hourly"]],
-    minimum_interval_seconds=60,
-)
-def sensor_tms_datamart_3hourly(context):
-    if datetime.now().hour % 3 == 0:
-        partition_keys = dicts["tms_datamart_3hourly"].partitions_def.get_partition_keys()
-        last_partition = partition_keys[-1]
-        yield RunRequest(partition_key=last_partition)
+sensors = []
 
-
-@run_status_sensor(
-    run_status=DagsterRunStatus.SUCCESS,
-    monitored_jobs=[dicts["tms_datalanding_hourly"]],
-    request_jobs=[dicts["tms_datamart_12hourly"]],
-    minimum_interval_seconds=60,
-)
-def sensor_tms_datamart_12hourly(context):
-    if datetime.now().hour % 12 == 0:
-        partition_keys = dicts["tms_datamart_12hourly"].partitions_def.get_partition_keys()
-        last_partition = partition_keys[-1]
-        yield RunRequest(partition_key=last_partition)
-
-
-@run_status_sensor(
-    run_status=DagsterRunStatus.SUCCESS,
-    monitored_jobs=[dicts["tms_datalanding_2hourly"]],
-    request_jobs=[dicts["tms_datamart_daily"]],
-    minimum_interval_seconds=60,
-)
-def sensor_tms_datamart_daily(context):
-    if datetime.now().hour == 0:
-        partition_keys = dicts["tms_datamart_daily"].partitions_def.get_partition_keys()
-        last_partition = partition_keys[-1]
-        yield RunRequest(partition_key=last_partition)
-
-
-@run_status_sensor(
-    run_status=DagsterRunStatus.SUCCESS,
-    monitored_jobs=[dicts["api_datalanding_12hourly"]],
-    request_jobs=[dicts["api_datamart_12hourly"]],
-    minimum_interval_seconds=60,
-)
-def sensor_api_datamart_12hourly(context):
-    if datetime.now().hour % 12 == 0:
-        partition_keys = dicts["api_datamart_12hourly"].partitions_def.get_partition_keys()
-        last_partition = partition_keys[-1]
-        yield RunRequest(partition_key=last_partition)
-
-
-sensors = [
-    sensor_tms_datamart_3hourly,
-    sensor_tms_datamart_12hourly,
-    sensor_tms_datamart_daily,
-    sensor_api_datamart_12hourly,
+sensor_configs = [
+    {
+        "interval": 3,
+        "sensors": [
+            {
+                "name": "sensor_datamart_outbound_tafteleacquisition",
+                "monitored_job": dicts["datalanding_outbound_tafteleacquisition"],
+                "request_job": dicts["datamart_outbound_tafteleacquisition"],
+            },
+            {
+                "name": "sensor_datamart_outbound_deskcolltaf",
+                "monitored_job": dicts["datalanding_outbound_deskcolltaf"],
+                "request_job": dicts["datamart_outbound_deskcolltaf"],
+            },
+        ],
+    },
+    {
+        "interval": 12,
+        "sensors": [
+            {
+                "name": "sensor_datamart_ecentrix_alpha",
+                "monitored_job": dicts["datalanding_ecentrix_alpha"],
+                "request_job": dicts["datamart_ecentrix_alpha"],
+            },
+            {
+                "name": "sensor_datamart_ecentrix_bravo",
+                "monitored_job": dicts["datalanding_ecentrix_bravo"],
+                "request_job": dicts["datamart_ecentrix_bravo"],
+            },
+            {
+                "name": "sensor_datamart_ecentrix_predictive",
+                "monitored_job": dicts["datalanding_ecentrix_predictive"],
+                "request_job": dicts["datamart_ecentrix_predictive"],
+            },
+            {
+                "name": "sensor_datamart_outbound_adm",
+                "monitored_job": dicts["datalanding_outbound_adm"],
+                "request_job": dicts["datamart_outbound_adm"],
+            },
+            {
+                "name": "sensor_datamart_outbound_ahm",
+                "monitored_job": dicts["datalanding_outbound_ahm"],
+                "request_job": dicts["datamart_outbound_ahm"],
+            },
+            {
+                "name": "sensor_datamart_outbound_esvi",
+                "monitored_job": dicts["datalanding_outbound_esvi"],
+                "request_job": dicts["datamart_outbound_esvi"],
+            },
+            {
+                "name": "sensor_datamart_outbound_mrs_iso",
+                "monitored_job": dicts["datalanding_outbound_mrs_iso"],
+                "request_job": dicts["datamart_outbound_mrs_iso"],
+            },
+            {
+                "name": "sensor_datamart_outbound_mrsdso",
+                "monitored_job": dicts["datalanding_outbound_mrsdso"],
+                "request_job": dicts["datamart_outbound_mrsdso"],
+            },
+            {
+                "name": "sensor_datamart_outbound_deskcollfif",
+                "monitored_job": dicts["datalanding_outbound_deskcollfif"],
+                "request_job": dicts["datamart_outbound_deskcollfif"],
+            },
+            {
+                "name": "sensor_datamart_outbound_clipan_duitcair",
+                "monitored_job": dicts["datalanding_outbound_clipan_duitcair"],
+                "request_job": dicts["datamart_outbound_clipan_duitcair"],
+            },
+            {
+                "name": "sensor_datamart_outbound_tam_concierge",
+                "monitored_job": dicts["datalanding_outbound_tam_concierge"],
+                "request_job": dicts["datamart_outbound_tam_concierge"],
+            },
+            {
+                "name": "sensor_datamart_outbound_jmfi_mycash",
+                "monitored_job": dicts["datalanding_outbound_jmfi_mycash"],
+                "request_job": dicts["datamart_outbound_jmfi_mycash"],
+            },
+        ],
+    },
+    {
+        "interval": 24,
+        "sensors": [
+            {
+                "name": "sensor_datamart_inbound_awda",
+                "monitored_job": dicts["datalanding_inbound_awda"],
+                "request_job": dicts["datamart_inbound_awda"],
+            },
+            {
+                "name": "sensor_datamart_inbound_awo",
+                "monitored_job": dicts["datalanding_inbound_awo"],
+                "request_job": dicts["datamart_inbound_awo"],
+            },
+            {
+                "name": "sensor_datamart_inbound_nasmoco",
+                "monitored_job": dicts["datalanding_inbound_nasmoco"],
+                "request_job": dicts["datamart_inbound_nasmoco"],
+            },
+            {
+                "name": "sensor_datamart_inbound_taf",
+                "monitored_job": dicts["datalanding_inbound_taf"],
+                "request_job": dicts["datamart_inbound_taf"],
+            },
+        ],
+    }
 ]
+   
+for schedule in sensor_configs:
+    for config in schedule["sensors"]:
+        sensor = make_dbt_sensors_with_partition(
+            name=config["name"],
+            monitored_jobs=[config["monitored_job"]],
+            request_jobs=[config["request_job"]],
+            interval=schedule["interval"]
+        )
+        sensors.append(sensor)
