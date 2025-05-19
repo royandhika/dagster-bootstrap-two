@@ -54,6 +54,21 @@ with supply as (
 		and a.created_time <= '{{ var('max_date') }}'
 	{% endif %}
 )
+,attempts as (
+	select 
+		contract_number
+		,supply_date = convert(date, a.created_time)
+		,attempt = count(id) over(partition by a.contract_number, convert(date, a.created_time))
+		,created_time
+		,rn = row_number() over(partition by a.contract_number, convert(date, a.created_time) order by a.created_time desc)
+	from {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_deskcolltaf_acs_call_history_daily_intelix') }} a
+	where exists (
+		select 1 
+		from call_history b  
+		where a.contract_number = b.contract_number
+			and convert(date, a.created_time) = convert(date, b.created_time)
+	)
+)
 ,call_history_detail as (
 	select 
 		call_history_id
@@ -110,7 +125,8 @@ with supply as (
 		,c.end_call 
 		,c.duration 
 		,c.cycle 
-		,c.dialing_mode 
+		,c.dialing_mode
+		,e.attempt 
 		,b.nctc_reason 
 		,b.ptp_status 
 		,is_payment = case 
@@ -128,58 +144,10 @@ with supply as (
 	left join payment_today d 
 		on coalesce(a.contract_number, b.contract_number) = d.contract_number
 		and convert(date, a.data_date) = convert(date, d.payment_date)
+	left join attempts e 
+		on b.contract_number = e.contract_number
+		and convert(date, b.supply_date) = convert(date, e.created_time)
+		and e.rn = 1
 	where b.rn = 1
 )
 select * from final 
-
--- select
--- 	contract_number = coalesce(a.contract_number, b.contract_number) 
--- 	,branch = coalesce(a.branch, b.branch) 
--- 	,class = a.class 
--- 	,supply_date = a.supply_date
--- 	,phone_number = coalesce(a.phone_number, b.phone_number)
--- 	,a.no_lkd 
--- 	,agent = a.user_id 
--- 	,call_result = da.description
--- 	,a.ptp_date
--- 	,a.notepad 
--- 	,call_date = convert(date, c.start_call)
--- 	,c.start_call
--- 	,c.end_call
--- 	,duration = datediff(second, c.start_call, c.end_call)
--- 	,c.cycle
--- 	,dialing_mode = case 
--- 		when c.dialing_mode = 1 then 'auto_dial'
--- 		when c.dialing_mode = 2 then 'semi_auto'
--- 		when c.dialing_mode = 3 then 'manual'
--- 	end
--- 	,nctc_reason = do.description 
--- 	,a.ptp_status
--- 	,is_payment = case 
--- 		when e.contract_number is null then 0
--- 		else 1
--- 	end 
--- 	,payment_date = e.created_time 
--- 	,uploaddate = getdate()
--- from {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_deskcolltaf_acs_call_history_daily_intelix') }} a
--- full join {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_deskcolltaf_acs_customer_profile_ext_intelix') }} b 
--- 	on a.contract_number = b.contract_number
--- 	and convert(date, a.created_time) = convert(date, b.data_date)
--- left join {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_deskcolltaf_acs_call_history_detail_daily_intelix') }} c
--- 	on c.call_history_id = a.id 
--- left join {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_deskcolltaf_acs_reference_intelix') }} da 
--- 	on da.reference = 'CALL_RESULT' 
---   	and da.value = a.call_result 
--- left join {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_deskcolltaf_acs_reference_intelix') }} do 
--- 	on do.reference = 'COLL_RESULT' 
---   	and do.value = a.nctc_reason 
--- left join {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_deskcolltaf_acs_class_intelix') }} d
--- 	on b.class_id = d.class_id
--- left join {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_deskcolltaf_acs_payment_today_intelix') }} e 
--- 	on coalesce(a.contract_number, b.contract_number) = e.contract_number
--- left join {{ source(env_var('ENV_SCHEMA') + '_dl', 'outbound_deskcolltaf_acs_customer_profile_ext_intelix') }} f 
--- 	on convert(date, b.start_call) = convert(date, f.data_date)
--- {% if is_incremental() %}
--- where a.created_time >= '{{ var('min_date') }}'
---     and a.created_time <= '{{ var('max_date') }}'
--- {% endif %}
