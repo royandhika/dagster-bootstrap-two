@@ -108,6 +108,11 @@ sensor_configs = [
                 "monitored_job": dicts["datalanding_inbound_taf"],
                 "request_job": dicts["datamart_inbound_taf"],
             },
+            {
+                "name": "sensor_datamart_inbound_trac",
+                "monitored_job": dicts["datalanding_inbound_trac"],
+                "request_job": dicts["datamart_inbound_trac"],
+            },
         ],
     }
 ]
