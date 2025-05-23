@@ -50,7 +50,7 @@ class CustomSlingTranslator(DagsterSlingTranslator):
 
 class CustomDbtRun(Config):
     full_refresh: bool = False
-    threads: int = 3
+    threads: int = 2
 
 
 class CustomPandasRun(Config):

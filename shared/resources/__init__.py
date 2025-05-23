@@ -110,17 +110,19 @@ class PSSResource(ConfigurableResource):
             table_name: str,
             pandas_method: Literal["fail", "replace", "append"], 
     ) -> DataFrame:
-        df = read_sql_query(
+        dfs = read_sql_query(
             sql=query,
             con=self._engine, 
-            params=params
+            params=params,
+            chunksize=100000
         )
 
-        pandas_write_table(
-            table_name=table_name,
-            method=pandas_method,
-            data=df
-        )
+        for df in dfs:
+            pandas_write_table(
+                table_name=table_name,
+                method=pandas_method,
+                data=df
+            )
 
         return df
     

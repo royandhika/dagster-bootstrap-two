@@ -1,0 +1,34 @@
+version: 2
+
+groups:
+  - name: pss_awo_customer
+    owner:
+      name: dbm
+
+sources:
+  - name: "{{ env_var('ENV_SCHEMA') + '_dl' }}"
+    tables:
+      - name: awo_customer_pss_staging
+      - name: awo_customer_address_pss_staging
+      - name: awo_customer_email_pss_staging
+      - name: awo_customer_marketingattribute_pss_staging
+      - name: awo_customer_telephone_pss_staging
+      - name: awo_customer_fax_pss_staging
+      - name: awo_customer_addressusage_pss_staging
+      - name: awo_customer_flat_pss_staging
+
+models:
+  - name: awo_customer_pss
+  - name: awo_customer_address_pss
+  - name: awo_customer_addressusage_pss
+  - name: awo_customer_email_pss
+  - name: awo_customer_fax_pss
+  - name: awo_customer_flat_pss
+  - name: awo_customer_marketingattribute_pss
+  - name: awo_customer_telephone_pss
+
+
+
+
+
+

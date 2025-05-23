@@ -4,8 +4,8 @@ from dagster import (
     AssetExecutionContext, 
     AssetSpec, 
     AssetKey, 
-    BackfillPolicy, 
     asset, 
+    sensor,
     EnvVar, 
     MaterializeResult, 
     MetadataValue, 
@@ -14,7 +14,8 @@ from dagster import (
     DagsterRunStatus,
     JobDefinition,
     RunRequest,
-    SkipReason
+    SkipReason,
+    RunsFilter,
 )
 from dagster_dbt import dbt_assets, DbtCliResource
 from dagster_sling import sling_assets, SlingResource
@@ -81,7 +82,7 @@ def make_sling_asset_with_partition(name: str, sling_file: str, partitions_def: 
     return _sling_asset
 
 
-def make_dbt_sensors_with_partition(name: str, monitored_jobs: list[JobDefinition], request_jobs: list[JobDefinition], interval: int):
+def make_dbt_sensor_with_partition(name: str, monitored_jobs: list[JobDefinition], request_jobs: list[JobDefinition], interval: int):
     @run_status_sensor(
         name=name,
         run_status=DagsterRunStatus.SUCCESS,
@@ -106,11 +107,10 @@ def make_dbt_sensors_with_partition(name: str, monitored_jobs: list[JobDefinitio
     return _sensor
 
 
-def make_pss_asset_with_partition(name: str, group: str, partitions_def: PartitionsDefinition | MultiPartitionsDefinition, query: str) -> AssetsDefinition:
+def make_pss_asset_with_partition(name: str, group: str, partitions_def: PartitionsDefinition | MultiPartitionsDefinition, query: str, so_param: bool = False) -> AssetsDefinition:
     @asset(
         name=name,
         partitions_def=partitions_def,
-        backfill_policy=BackfillPolicy.single_run(),
         pool="pss",
         key_prefix=["landings"],
         group_name=group,
@@ -121,6 +121,7 @@ def make_pss_asset_with_partition(name: str, group: str, partitions_def: Partiti
     )
     def _pss_asset(context: AssetExecutionContext, pss: PSSResource, config: CustomPandasRun):
         start, end = context.partition_time_window
+        start -= timedelta(minutes=30)
         start = start.strftime('%Y-%m-%d %H:%M:%S')
         end = end.strftime('%Y-%m-%d %H:%M:%S')
         table = query
@@ -134,7 +135,8 @@ def make_pss_asset_with_partition(name: str, group: str, partitions_def: Partiti
 
         if hasattr(context.partition_key, "keys_by_dimension"):
             so = context.partition_key.keys_by_dimension["so"]  # type: ignore
-            param = (so, start, end)
+            if so_param:
+                param = (so, start, end)
             table = table.format(so=so)
         
         count = 0
@@ -154,3 +156,61 @@ def make_pss_asset_with_partition(name: str, group: str, partitions_def: Partiti
             }
         )
     return _pss_asset
+
+
+def make_dbt_sensor_with_multiple_required(name: str, monitored_jobs: list[JobDefinition], request_job: JobDefinition, range: int):
+    @sensor(
+        name=name,
+        job=request_job
+    )
+    def _sensor(context):
+        # Define time window
+        time_window = datetime.now() - timedelta(hours=range)
+        
+        all_completed = True
+        completion_times = {}
+        
+        for job_name in monitored_jobs:
+            run_records = context.instance.get_run_records(
+                filters=RunsFilter(
+                    job_name=job_name, # type: ignore
+                    statuses=[DagsterRunStatus.SUCCESS],
+                    created_after=time_window,
+                ),
+                order_by="update_timestamp",
+                ascending=False,
+                limit=1
+            )
+            
+            if not run_records:
+                all_completed = False
+                break
+            else:
+                completion_times[job_name] = run_records[0].end_time
+        
+        if all_completed:
+            # Generate unique run key based on completion times
+            run_key = f"run_{'_'.join(str(t) for t in completion_times.values())}"
+            
+            # Check if we've already triggered for this combination
+            cursor = context.cursor or ""
+            if run_key != cursor:
+                context.update_cursor(run_key)
+                
+                # Get the last available partition if the job has a daily partition definition
+                partition_key = None
+                if hasattr(request_job, 'partitions_def') and request_job.partitions_def:
+                    partition_keys = request_job.partitions_def.get_partition_keys(
+                        dynamic_partitions_store=context.instance
+                    )
+                    if partition_keys:
+                        partition_key = partition_keys[-1]  # Get the last partition
+                
+                return RunRequest(
+                    run_key=run_key,
+                    partition_key=partition_key
+                )
+        
+        return SkipReason("Not all monitored jobs completed yet")
+    
+    return _sensor

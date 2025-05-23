@@ -1,0 +1,35 @@
+version: 2
+
+groups:
+  - name: pss_awo_master
+    owner:
+      name: dbm
+
+sources:
+  - name: "{{ env_var('ENV_SCHEMA') + '_dl' }}"
+    tables:
+      - name: awo_detail_partnerfunction_pss_staging
+      - name: awo_detail_dealer_businessarea_pss_staging
+      - name: awo_detail_dealer_salesoffice_pss_staging
+      - name: awo_detail_city_pss_staging
+      - name: awo_detail_region_pss_staging
+      - name: awo_detail_pkbtype_pss_staging
+      - name: awo_detail_jobtype_pss_staging
+      - name: awo_detail_activitytype_pss_staging
+      - name: awo_detail_billingtype_pss_staging
+      - name: awo_detail_employee_pss_staging
+      - name: awo_detail_position_pss_staging
+      - name: awo_detail_chargeto_pss_staging
+
+models:
+  - name: awo_detail_activitytype_pss
+  - name: awo_detail_billingtype_pss
+  - name: awo_detail_chargeto_pss
+  - name: awo_detail_city_pss
+  - name: awo_detail_dealer_pss
+  - name: awo_detail_employee_pss
+  - name: awo_detail_jobtype_pss
+  - name: awo_detail_partnerfunction_pss
+  - name: awo_detail_pkbtype_pss
+  - name: awo_detail_position_pss
+  - name: awo_detail_region_pss

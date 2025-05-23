@@ -1,0 +1,30 @@
+version: 2
+
+groups:
+  - name: pss_awo_pkb
+    owner:
+      name: dbm
+
+sources:
+  - name: "{{ env_var('ENV_SCHEMA') + '_dl' }}"
+    tables:
+      - name: awo_transaction_pkb_pss_staging
+      - name: awo_transaction_pkb_partnerdetail_pss_staging
+      - name: awo_transaction_pkb_operation_pss_staging
+      - name: awo_transaction_pkb_billing_pss_staging
+      - name: awo_transaction_pkb_billing_alt_pss_staging
+      - name: awo_transaction_pkb_material_pss_staging
+      - name: awo_transaction_pkb_orderrequest_pss_staging
+      - name: awo_transaction_pkb_salesorder_pss_staging
+      - name: awo_transaction_pkb_booking_pss_staging
+
+models:
+  - name: awo_transaction_pkb_pss
+  - name: awo_transaction_pkb_billing_alt_pss
+  - name: awo_transaction_pkb_billing_pss
+  - name: awo_transaction_pkb_booking_pss
+  - name: awo_transaction_pkb_material_pss
+  - name: awo_transaction_pkb_operation_pss
+  - name: awo_transaction_pkb_orderrequest_pss
+  - name: awo_transaction_pkb_partnerdetail_pss
+  - name: awo_transaction_pkb_salesorder_pss

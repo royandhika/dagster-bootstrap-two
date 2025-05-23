@@ -1,0 +1,24 @@
+version: 2
+
+groups:
+  - name: pss_awo_sales
+    owner:
+      name: dbm
+
+sources:
+  - name: "{{ env_var('ENV_SCHEMA') + '_dl' }}"
+    tables:
+      - name: awo_transaction_sales_pss_staging
+      - name: awo_transaction_sales_partnerdetail_pss_staging
+      - name: awo_transaction_sales_salesorder_pss_staging
+      - name: awo_transaction_sales_invoice_pss_staging
+      - name: awo_transaction_sales_invoice_tso_pss_staging
+      - name: awo_transaction_sales_tvc_pss_staging
+
+models:
+  - name: awo_transaction_sales_pss
+  - name: awo_transaction_sales_invoice_pss
+  - name: awo_transaction_sales_invoice_tso_pss
+  - name: awo_transaction_sales_partnerdetail_pss
+  - name: awo_transaction_sales_salesorder_pss
+  - name: awo_transaction_sales_tvc_pss

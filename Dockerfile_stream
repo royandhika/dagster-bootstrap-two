@@ -1,0 +1,29 @@
+FROM python:3.10-slim
+
+RUN apt update && \
+    apt install -y curl && \
+    curl -sSL -O https://packages.microsoft.com/config/debian/$(grep VERSION_ID /etc/os-release | cut -d '"' -f 2 | cut -d '.' -f 1)/packages-microsoft-prod.deb && \
+    dpkg -i packages-microsoft-prod.deb && \
+    rm packages-microsoft-prod.deb && \
+    apt-get update && apt-get install -y && \
+    ACCEPT_EULA=Y apt-get install -y msodbcsql17 && \
+    ACCEPT_EULA=Y apt-get install -y mssql-tools && \
+    apt-get install -y unixodbc unixodbc-dev apt-utils && \
+    apt-get install -y libgssapi-krb5-2 && \
+    pip install uv
+
+COPY ./requirements.txt .
+RUN uv pip install --system -r requirements.txt 
+
+COPY ./stream/requirements.txt ./add_requirements.txt
+RUN uv pip install --system -r add_requirements.txt
+
+# Add code location code
+WORKDIR /opt/dagster/app
+COPY ./stream /opt/dagster/app
+
+# Run dagster code server on port 4002
+EXPOSE 4002
+
+# CMD allows this to be overridden from run launchers or executors to execute runs and steps
+CMD ["dagster", "code-server", "start", "-h", "0.0.0.0", "-p", "4002", "-f", "definitions.py"]

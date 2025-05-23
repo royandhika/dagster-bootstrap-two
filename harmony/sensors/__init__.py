@@ -1,4 +1,4 @@
-from shared.utils.custom_asset import make_dbt_sensors_with_partition
+from shared.utils.custom_asset import make_dbt_sensor_with_partition
 from jobs import dicts
 
 
@@ -119,7 +119,7 @@ sensor_configs = [
    
 for schedule in sensor_configs:
     for config in schedule["sensors"]:
-        sensor = make_dbt_sensors_with_partition(
+        sensor = make_dbt_sensor_with_partition(
             name=config["name"],
             monitored_jobs=[config["monitored_job"]],
             request_jobs=[config["request_job"]],

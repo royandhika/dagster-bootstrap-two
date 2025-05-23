@@ -42,7 +42,7 @@ def sling_add_backfill(yaml: dict, time_window: TimeWindow) -> dict:
 
 def pandas_write_table(table_name: str, method: Literal["fail", "replace", "append"], data: DataFrame):
     conn_string = EnvVar("ITSQL_STRING").get_value() or ""
-    engine = create_engine(conn_string)
+    engine = create_engine(conn_string, fast_executemany=True)
     schema = EnvVar("ENV_SCHEMA").get_value() or ""
     data["uploaddate"] = datetime.now()
     
@@ -55,5 +55,6 @@ def pandas_write_table(table_name: str, method: Literal["fail", "replace", "appe
         name=table_name, 
         con=engine, 
         if_exists=method, 
-        index=False
+        index=False,
+        chunksize=50000
     )
