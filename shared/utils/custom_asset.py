@@ -170,10 +170,10 @@ def make_dbt_sensor_with_multiple_required(name: str, monitored_jobs: list[JobDe
         all_completed = True
         completion_times = {}
         
-        for job_name in monitored_jobs:
+        for job in monitored_jobs:
             run_records = context.instance.get_run_records(
                 filters=RunsFilter(
-                    job_name=job_name, # type: ignore
+                    job_name=job.name,
                     statuses=[DagsterRunStatus.SUCCESS],
                     created_after=time_window,
                 ),
@@ -186,7 +186,7 @@ def make_dbt_sensor_with_multiple_required(name: str, monitored_jobs: list[JobDe
                 all_completed = False
                 break
             else:
-                completion_times[job_name] = run_records[0].end_time
+                completion_times[job.name] = run_records[0].end_time
         
         if all_completed:
             # Generate unique run key based on completion times
