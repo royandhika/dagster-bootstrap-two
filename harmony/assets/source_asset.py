@@ -170,6 +170,19 @@ external = [
     ),
     *make_external_asset(
         {"mysql"},
+        "inbound_trac",
+        [
+            "inbound_trac_cc_queue",
+            "inbound_trac_cc_queue_detail",
+            "inbound_trac_cc_ticket_task",
+            "inbound_trac_cc_master_category",
+            "inbound_trac_cc_master_reference",
+            "inbound_trac_cc_master_sap",
+            "inbound_trac_cc_user",
+        ],
+    ),
+    *make_external_asset(
+        {"mysql"},
         "inbound_omni_astralife",
         [
             "inbound_omni_astralife_cc_queue",

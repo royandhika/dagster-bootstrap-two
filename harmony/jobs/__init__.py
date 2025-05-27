@@ -86,6 +86,10 @@ job_configs = [
                         "name": "inbound_taf", 
                         "select": AssetSelection.groups("inbound_taf")
                     },
+                    {
+                        "name": "inbound_trac", 
+                        "select": AssetSelection.groups("inbound_trac")
+                    },
                 ]
             },
             {
@@ -195,6 +199,10 @@ job_configs = [
                     {
                         "name": "inbound_taf", 
                         "select": AssetSelection.groups("inbound_taf")
+                    },
+                    {
+                        "name": "inbound_trac", 
+                        "select": AssetSelection.groups("inbound_trac")
                     },
                 ]
             }

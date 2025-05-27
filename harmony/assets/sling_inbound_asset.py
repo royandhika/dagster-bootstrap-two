@@ -67,6 +67,19 @@ slings = [
             "inbound_taf/wa_inbox.yaml",
         ],
     },
+    {
+        "name": "sling_inbound_trac",
+        "partitions_def": partition_2hourly,
+        "files": [
+            "inbound_trac/cc_master_category.yaml",
+            "inbound_trac/cc_master_reference.yaml",
+            "inbound_trac/cc_master_sap.yaml",
+            "inbound_trac/cc_queue_detail.yaml",
+            "inbound_trac/cc_queue.yaml",
+            "inbound_trac/cc_ticket_task.yaml",
+            "inbound_trac/cc_user.yaml",
+        ],
+    },
 ]
 
 for sling in slings:

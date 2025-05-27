@@ -13,6 +13,9 @@ groups:
   - name: inbound_taf
     owner:
       name: dbm
+  - name: inbound_trac
+    owner:
+      name: dbm
 
 sources:
   - name: "{{ env_var('ENV_SCHEMA') + '_dl' }}"
@@ -40,6 +43,14 @@ sources:
       - name: inbound_taf_cc_master_category_intelix
       - name: inbound_taf_cc_master_reference_intelix
       - name: inbound_taf_cc_master_customer_intelix
+      
+      - name: inbound_trac_cc_queue_intelix
+      - name: inbound_trac_cc_queue_detail_intelix
+      - name: inbound_trac_cc_master_category_intelix
+      - name: inbound_trac_cc_master_reference_intelix
+      - name: inbound_trac_cc_master_sap_intelix
+      - name: inbound_trac_cc_ticket_task_intelix
+      - name: inbound_trac_cc_user_intelix
 
 models:
   - name: in_awda_maucash_report_ticket
@@ -49,3 +60,5 @@ models:
   - name: in_nasmoco_ticket_report
 
   - name: in_taf_report_ticket
+
+  - name: in_trac_report_ticket

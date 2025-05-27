@@ -23,6 +23,11 @@ dbt_inbound = [
         "select": "group:inbound_taf",
         "partitions_def": partition_daily
     },
+    {
+        "name": "dbt_inbound_trac",
+        "select": "group:inbound_trac",
+        "partitions_def": partition_daily
+    },
 ]
 
 for dbt in dbt_inbound:
