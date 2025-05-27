@@ -26,6 +26,6 @@ for config in sensor_configs:
         name=config["name"],
         monitored_jobs=config["monitored_job"],
         request_job=config["request_job"],
-        range=config["range"]
+        lookback_range=config["range"]
     )
     sensors.append(sensor)
