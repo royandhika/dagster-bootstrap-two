@@ -26,7 +26,7 @@ from dagster_dbt import dbt_assets, DbtCliResource
 from dagster_sling import sling_assets, SlingResource
 from shared.utils.custom_translator import CustomDbtTranslator, CustomDbtRun, CustomSlingTranslator, CustomPandasRun
 from shared.utils.custom_function import sling_yaml_dict, sling_add_backfill
-from shared.resources import path_dbt, PSSResource
+from shared.resources import path_dbt, PSSResource, ITFS02Resource
 from datetime import timedelta, datetime
 import json
 import itertools
@@ -267,12 +267,12 @@ def make_dbt_sensor_with_multiple_required(name: str, monitored_jobs: list[JobDe
                     if partition_keys:
                         partition_key = partition_keys[-1] 
                 
-                yield RunRequest(
+                return RunRequest(
                     run_key=run_key,
                     partition_key=partition_key
                 )
         
-        yield SkipReason("Not all monitored jobs completed yet")
+        return SkipReason("Not all monitored jobs completed yet")
     
     return _sensor
 
@@ -465,3 +465,66 @@ def make_dbt_sensor_with_multiple_required(name: str, monitored_jobs: list[JobDe
 #                 })
 #                 for static_key in static_keys
 #             ]
+
+def make_sap_asset_with_partition(name: str, group: str, partitions_def: PartitionsDefinition | MultiPartitionsDefinition, file_name: str, lead: int = 0):
+    @asset(
+        name=name,
+        partitions_def=partitions_def,
+        pool="sap",
+        key_prefix=["landings"],
+        group_name=group,
+        kinds={"sqlserver", "python"},
+        metadata={
+            "dagster/table_name": f"AWODB.{EnvVar('ENV_SCHEMA').get_value()}_dl.{name}",
+        },
+    )
+    def _sap_asset(context: AssetExecutionContext, itfs02: ITFS02Resource, config: CustomPandasRun):
+        folder = ["SAP"]
+        
+        # Fill constants
+        if hasattr(context.partition_key, "keys_by_dimension"):
+            # Map to code
+            map = {
+                "DSO": "0003",
+                "ISO": "0004",
+                "BSO": "0173",
+                "NSO": "0172",
+                "PSO": "0174",
+            }
+
+            date = context.partition_key.keys_by_dimension["date"]  # type: ignore
+            so = context.partition_key.keys_by_dimension["so"]  # type: ignore
+            
+            date = datetime.strptime(date, "%Y-%m-%d")
+            date = date + timedelta(days=lead)  
+            date = date.strftime('%Y%m%d')
+            
+            file = file_name.format(date=date, so=map.get(so))
+        else:
+            date = context.partition_time_window
+            date = date.start + timedelta(days=lead)  
+            date = date.strftime('%Y%m%d')
+            file = file_name.format(date=date)
+
+        df = itfs02.read_csv(
+            folder=folder,
+            pattern=file,
+            sep="|",
+            sanitize=True,
+        )
+        # Read file
+        itfs02.write_to_db(
+            table_name=name,
+            pandas_method=config.method,
+            data=df,
+        )
+
+        count = len(df)
+
+        yield MaterializeResult(
+            metadata={
+                "dagster/row_count": MetadataValue.int(count)
+            }
+        )
+
+    return _sap_asset

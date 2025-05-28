@@ -1,4 +1,4 @@
-from shared.partitions.static_so import partition_so_daily, partition_daily, partition_4so_daily, partition_2so_daily
+from shared.partitions.static_so import partition_so_daily, partition_daily, partition_5so_daily, partition_2so_daily
 from shared.utils.custom_asset import make_pss_asset_with_partition
 import pss.sales as sales
 
@@ -21,7 +21,7 @@ sale = {
         {
             "name": "awo_transaction_sales_invoice_pss_staging",
             "query": sales.AWO_TRANSACTION_SALES_INVOICE_NONTSO,
-            "partitions_def": partition_4so_daily,
+            "partitions_def": partition_5so_daily,
             "so_param": False,
         },
         {
