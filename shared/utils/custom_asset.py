@@ -267,12 +267,12 @@ def make_dbt_sensor_with_multiple_required(name: str, monitored_jobs: list[JobDe
                     if partition_keys:
                         partition_key = partition_keys[-1] 
                 
-                yield RunRequest(
+                return RunRequest(
                     run_key=run_key,
                     partition_key=partition_key
                 )
         
-        yield SkipReason("Not all monitored jobs completed yet")
+        return SkipReason("Not all monitored jobs completed yet")
     
     return _sensor
 
