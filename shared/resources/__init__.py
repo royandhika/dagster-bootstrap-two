@@ -2,9 +2,9 @@ from pathlib import Path
 from dagster import EnvVar, ConfigurableResource, InitResourceContext
 from dagster_dbt import DbtProject, DbtCliResource
 from dagster_sling import SlingConnectionResource, SlingResource
-from typing import Tuple, Optional, Literal, Any
+from typing import Tuple, Optional, Literal, Any, Sequence
 from shared.resources.api_config import API_LIST_PROJECTS
-from shared.utils.custom_function import pandas_write_table
+from shared.utils.custom_function import pandas_write_table, get_file_path, read_file_csv, sanitize_csv
 from pandas import DataFrame, read_sql_query
 from requests import post, auth, request
 from sqlalchemy import create_engine
@@ -127,3 +127,50 @@ class PSSResource(ConfigurableResource):
         return df
     
 resource_pss = PSSResource()
+
+
+class ITFS02Resource(ConfigurableResource):
+    base_path: str = "/opt/dagster/app/storage/itfs02"
+
+    def get_path(
+        self,
+        folder: Sequence[str],
+        pattern: str,
+    ) -> Path:
+        path_file = get_file_path(self.base_path, folder, pattern)
+        return path_file
+    
+    def read_csv(
+        self,
+        folder: Sequence[str],
+        pattern: str,
+        sep: str,
+        sanitize: bool = False,
+    ) -> DataFrame:
+        path = self.get_path(folder, pattern)
+            
+        # If sanitize use function
+        if sanitize:
+            df_io = sanitize_csv(path)
+            df = read_file_csv(df_io, sep=sep, dtype="str")
+
+        # If not then read direct path
+        else:
+            df = read_file_csv(path, sep=sep, dtype="str")
+
+        df["filename"] = path.name
+        return df
+    
+    def write_to_db(
+        self,
+        table_name: str,
+        pandas_method: Literal["fail", "replace", "append"],
+        data: DataFrame,
+    ):
+        pandas_write_table(
+            table_name=table_name,
+            method=pandas_method,
+            data=data,
+        )
+
+resource_itfs02 = ITFS02Resource()

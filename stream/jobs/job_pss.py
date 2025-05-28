@@ -1,6 +1,6 @@
 from dagster import AssetSelection, define_asset_job, AssetKey
 from shared.partitions import partition_daily
-from shared.partitions.static_so import partition_so_daily, partition_4so_daily, partition_2so_daily
+from shared.partitions.static_so import partition_so_daily, partition_5so_daily, partition_2so_daily
 
 
 jobs = []
@@ -34,7 +34,7 @@ job_configs = [
         "name": "landing_pss_sales_invoice",
         "selection": 
             AssetSelection.assets(AssetKey(["landings", "awo_transaction_sales_invoice_pss_staging"])),
-        "partitions_def": partition_4so_daily
+        "partitions_def": partition_5so_daily
     },
     {
         "name": "landing_pss_sales_tvc",

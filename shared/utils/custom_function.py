@@ -3,7 +3,10 @@ from dagster._core.definitions.time_window_partitions import TimeWindow
 from datetime import datetime, timedelta
 from pandas import DataFrame
 from sqlalchemy import create_engine
-from typing import Any, Literal
+from typing import Any, Literal, Sequence
+from io import StringIO
+from pathlib import Path
+import pandas as pd
 import yaml
 import os
 import json
@@ -58,3 +61,56 @@ def pandas_write_table(table_name: str, method: Literal["fail", "replace", "appe
         index=False,
         chunksize=50000
     )
+
+
+def sanitize_csv(path: Path) -> StringIO:
+    with open(path, 'r', encoding='utf-8') as file:
+        lines = file.readlines()
+
+    # Get expected number of columns
+    expected_num_columns = lines[0].count('|') + 1
+
+    cleaned_lines = []
+    current_line = ""
+    rn = 0
+
+    for line in lines:
+        rn += 1 # Line counter
+        stripped_line = line.strip()
+
+        if not stripped_line:
+            continue
+
+        if current_line:
+            current_line += " " + stripped_line
+        else:
+            current_line = stripped_line
+
+        # Count the number of '|' in the current line
+        num_pipes = current_line.count('|')
+
+        if num_pipes == expected_num_columns - 1:
+            cleaned_lines.append(current_line)
+            current_line = ""
+        if num_pipes > expected_num_columns - 1:
+            raise ValueError(f"Extra '|' detected in line {rn}: {line})")
+        
+    if current_line:
+        cleaned_lines.append(current_line)
+
+    cleaned_content = "\n".join(cleaned_lines)
+
+    return StringIO(cleaned_content)
+
+
+def get_file_path(base_path: str, folder: Sequence[str], pattern: str) -> Path:
+    search_path = Path(base_path, *folder)
+    files = sorted(search_path.glob(pattern))
+    if files:
+        return files[0]
+    else:
+        raise ValueError(f"File {pattern} not found")
+
+
+def read_file_csv(data, sep: str, dtype: str) -> DataFrame:
+    return pd.read_csv(data, sep=sep, dtype=dtype).convert_dtypes()

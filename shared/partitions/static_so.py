@@ -3,7 +3,7 @@ from shared.partitions import partition_daily
 
 
 partition_so = StaticPartitionsDefinition(["TSO", "DSO", "ISO", "BSO", "NSO", "PSO"])
-partition_4so = StaticPartitionsDefinition(["DSO", "ISO", "BSO", "NSO", "PSO"])
+partition_5so = StaticPartitionsDefinition(["DSO", "ISO", "BSO", "NSO", "PSO"])
 partition_2so = StaticPartitionsDefinition(["TSO", "DSO"])
 
 partition_so_daily = MultiPartitionsDefinition(
@@ -12,10 +12,10 @@ partition_so_daily = MultiPartitionsDefinition(
         "so": partition_so,
     }
 )
-partition_4so_daily = MultiPartitionsDefinition(
+partition_5so_daily = MultiPartitionsDefinition(
     {
         "date": partition_daily,
-        "so": partition_4so,
+        "so": partition_5so,
     }
 )
 partition_2so_daily = MultiPartitionsDefinition(

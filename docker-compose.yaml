@@ -75,6 +75,7 @@ services:
       - ./shared:/opt/dagster/app/shared
       - ./profiles.yml:/opt/dagster/app/dbt/profiles.yml
       - ./stream:/opt/dagster/app
+      - ./storage:/opt/dagster/app/storage
     networks:
       - dagster-network
     logging:
